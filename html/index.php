@@ -1,10 +1,9 @@
 <?php
-require_once("./lib/db.php");
+// Contains page and footer infos
 $page_structure = require_once("page_structure.php");
 $info = require_once("info.php");
 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -17,22 +16,23 @@ $info = require_once("info.php");
 </head>
 
 <body class="block">
-    <?php // header
+    <?php
+    // Register navbar
     include_once("snippets/header_register.php");
     ?>
-    <?php // company logo
-    ?>
     <div>
+        <!-- Logo -->
         <img class="logo" src="imgs/antiopa.svg" alt="logo">
     </div>
     <form class="flex" method="post">
         <input class="lightFont login" type="email" name="email" placeholder="Email" required="true" minlength="6" />
         <input class="lightFont login" type="password" name="password" placeholder="Password" required="true" minlength="8" maxlength="255" />
-        <input class="" type="checkbox" name="stayLoggedIn" value="true">
+        <input type="checkbox" name="stayLoggedIn" value="true">
         <label for="stayLoggedIn" class="lightFont">stay logged in</label>
         <button class="btn" name="login_user" type="submit">login</button>
     </form>
-    <?php // db sign in query
+    <?php
+    // Database query to sign in
     require_once('queries/index.query.inc.php')
     ?>
 </body>
