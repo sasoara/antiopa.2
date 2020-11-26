@@ -1,14 +1,16 @@
 <?php
 
-// search db query
+/**
+ * This file helps to find a post.
+ * It contains the query which finds private and public posts.
+ */
+
 // string variable substitution per complex syntax:
 // https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.double
-# main sql statement
 
-$start = TRUE;
+
 $email = $_SESSION['email'];
 
-if ($start) {
     $limitation = isset($_GET['term']) !== TRUE ? "LIMIT 10" : "";
     $sql = "SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_type, p.is_public, p.users_id
 
@@ -87,7 +89,7 @@ if ($start) {
     <div class="sticky">
         <?php
         $baseURL = "/search.php";
-        $searchURL = isset($_GET['term']) ? "&term=" . urlencode( htmlspecialchars($_GET['term'])) : "";
+        $searchURL = isset($_GET['term']) ? "&term=" . urlencode(htmlspecialchars($_GET['term'])) : "";
         $filterURL = $filterURL != "" ? "&filter%5B%5D=" . $filterURL : "";
         $sortURL_date = "?sort=date&orderby=";
         $sortURL_abc = "?sort=title&orderby=";
@@ -97,8 +99,8 @@ if ($start) {
             $orderBY = $_GET['orderby'] == "asc" ? "desc" : "asc";
         }
         ?>
-        <a href="<?php echo $baseURL . $sortURL_date . $orderBY . $searchURL . $filterURL  ?>" name="date_sort" name="" class="block <?= $dateFilterClass ?>"></a>
-        <a href="<?php echo $baseURL . $sortURL_abc . $orderBY . $searchURL . $filterURL  ?>" name="abc_sort" name="" class="block <?= $abcFilterClass ?>"></a>
+        <a href="<?php echo $baseURL . $sortURL_date . $orderBY . $searchURL . $filterURL  ?>" id="date_sort" class="block <?= $dateFilterClass ?>"></a>
+        <a href="<?php echo $baseURL . $sortURL_abc . $orderBY . $searchURL . $filterURL  ?>" id="abc_sort" class="block <?= $abcFilterClass ?>"></a>
 
     </div>
 
@@ -134,5 +136,3 @@ if ($start) {
             </a>
         <?php } ?>
     </div>
-<?php  }
-?>

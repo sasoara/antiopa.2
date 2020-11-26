@@ -2,7 +2,7 @@
 // Database connectivity
 require_once("lib/db.php");
 
-// Sites in the Antiopa webpage, which includes header and footer
+// Contains page and footer infos
 $page_structure = require_once("page_structure.php");
 
 // Queries for filtering and sorting
@@ -39,47 +39,55 @@ $dateFilterClass = 'inactive_sort';
     <div class="page-container">
         <div class="content">
 
-            <?php // header
+            <?php
+            // Header navbar
             require_once("snippets/header.php");
             ?>
             <div class="block setDown">
                 <h1>Search</h1>
 
-                <?php // search input field
+                <?php // Search input field
                 ?>
-                <form method="get"> <!-- XSS! TODO: Reflected one; input should be validate / encode! -->
+                <form method="get">
                     <div class="flex">
                         <input class="search" type="text" name="term">
                         <button type="submit" class="searchBtn btn"></button>
                     </div>
 
-                    <?php // tabs under search
+                    <?php // Tabs under the search input field
                     ?>
                     <div class="flex">
+                        <?php // Filter documents
+                        ?>
                         <div class="roundshadow tab">
                             <label class="lightFont hand">
-                                <input type="checkbox" class="" name="filter[]" value="docs"> docs
+                                <input type="checkbox" name="filter[]" value="docs"> docs
                             </label>
                         </div>
+                        <?php // Filter images
+                        ?>
                         <div class="roundshadow tab">
                             <label class="lightFont hand">
-                                <input type="checkbox" class="" name="filter[]" value="images"> images
+                                <input type="checkbox" name="filter[]" value="images"> images
                             </label>
                         </div>
+                        <?php // Filter videos
+                        ?>
                         <div class="roundshadow tab">
                             <label class="lightFont hand">
-                                <input type="checkbox" class="" name="filter[]" value="videos"> videos
+                                <input type="checkbox" name="filter[]" value="videos"> videos
                             </label>
                         </div>
                     </div>
                 </form>
-
-                <?php // db search query
+                <?php
+                // Database query to search
                 require_once('queries/search.query.inc.php') ?>
             </div>
         </div>
 
-        <?php // footer
+        <?php
+        // Footer
         require_once("snippets/footer.php");
         ?>
     </div>
