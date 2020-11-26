@@ -40,7 +40,7 @@ if (isset($_POST['register_user'])) {
                 $_SESSION['stay_logged_in'] = false;
                 header('location: search.php');
             } else {
-                $error = "Email already exists, try again!";
+                $error = "Email already exists, try again!"; // TODO: Ist das eine gute / schlechte Fehlermeldung??
             }
         }
     }
