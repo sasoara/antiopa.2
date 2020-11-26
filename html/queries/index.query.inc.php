@@ -24,19 +24,19 @@ if (isset($_POST['login_user'])) {
             // Selects users from the database to check the fit.
             $stmt = $dbh->prepare("SELECT email, pwd, id FROM users WHERE email = :email");
             $email = htmlspecialchars($_POST['email']);
-            $password = $_POST['password'];
+            $password = $_POST['password']; // TODO: Braucht es hier auch htmlspecialchars()??
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             $db_array_results = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Checks the entered password, which must match the entered user.
-            if (password_verify($password, $db_array_results['pwd'])) {
+            if (password_verify($password, $db_array_results['pwd'])) { //TODO: Da versteckt sich ein Bug!!
                 session_regenerate_id(true);
 
                 // Session variables are set for the registered user.
                 $_SESSION['email'] = $email;
                 $_SESSION['user_id'] = $db_array_results['id'];
-                $_SESSION['stay_logged_in'] = htmlspecialchars($_POST["stayLoggedIn"]);
+                $_SESSION['stay_logged_in'] = htmlspecialchars($_POST["stayLoggedIn"]); // TODO: htmlspecialchars für eine Checkbox??
                 header('location: search.php');
             } else {
                 $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";

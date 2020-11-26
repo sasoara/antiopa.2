@@ -1,6 +1,7 @@
 <?php
 // Contains page and footer infos
 $page_structure = require_once("page_structure.php");
+// TODO: Braucht es diese info.php / queries??
 $info = require_once("info.php");
 
 ?>
