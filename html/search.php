@@ -6,6 +6,7 @@ require_once("lib/db.php");
 $page_structure = require_once("page_structure.php");
 
 // Queries for filtering and sorting
+// TODO: Braucht es diese info.php / queries??
 $info = require_once("info.php");
 
 $uri = $_SERVER['REQUEST_URI'];
@@ -49,6 +50,8 @@ $dateFilterClass = 'inactive_sort';
                 <?php // Search input field
                 ?>
                 <form method="get">
+                    <?php // TODO: XSS Reflected! > The input should be validated & encoded!
+                    ?>
                     <div class="flex">
                         <input class="search" type="text" name="term">
                         <button type="submit" class="searchBtn btn"></button>
