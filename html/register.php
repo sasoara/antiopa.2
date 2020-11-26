@@ -1,6 +1,5 @@
 <?php
-require_once("./lib/db.php");
-# container for Antiopa web-page, includes header and footer
+// Contains page and footer infos
 $page_structure = require_once("page_structure.php");
 $info = require_once("info.php");
 
@@ -29,8 +28,8 @@ $info = require_once("info.php");
             <?php // input fields 'email' and 'password' and the button 'submit'
             ?>
             <form class="flex" method="post">
-                <input class="lightFont login" type="email" placeholder="email" name="email" required="true" minlength="6" />
-                <input class="lightFont login" type="password" name="password" placeholder="password" required="true" minlength="8" maxlength="255" />
+                <input class="lightFont login" type="email" placeholder="email" name="email" required minlength="6" />
+                <input class="lightFont login" type="password" name="password" placeholder="password" required minlength="8" maxlength="255" />
                 <button class="btn" type="submit" name="register_user">submit</button>
             </form>
             <div class="push-notification-error">
