@@ -26,10 +26,10 @@ $info = require_once("info.php");
         <img class="logo" src="imgs/antiopa.svg" alt="logo">
     </div>
     <form class="flex" method="post">
-        <input class="lightFont login" type="email" name="email" placeholder="Email" required="true" minlength="6" />
-        <input class="lightFont login" type="password" name="password" placeholder="Password" required="true" minlength="8" maxlength="255" />
+        <input class="lightFont login" type="email" name="email" placeholder="Email" required minlength="6" />
+        <input class="lightFont login" type="password" name="password" placeholder="Password" required minlength="8" maxlength="255" />
         <input type="checkbox" name="stayLoggedIn" value="true">
-        <label for="stayLoggedIn" class="lightFont">stay logged in</label>
+        <label id="stayLoggedIn" class="lightFont">stay logged in</label>
         <button class="btn" name="login_user" type="submit">login</button>
     </form>
     <?php
