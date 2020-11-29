@@ -17,7 +17,7 @@ Then the access data will be saved in the `config/db_config.php` file, which sti
         'password' => ''
     ],
     'web' => [
-        'root' => '',
+        'root' => 'Antiopa.2/',
     ]
 ];
 ?>
