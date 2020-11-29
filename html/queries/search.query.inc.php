@@ -25,32 +25,48 @@ $sql = "SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_typ
                     ";
 
 if (!empty($_GET['term'])) {
+    // All tags and search terms separated by spaces are saved
     $query_terms = explode(' ', htmlspecialchars($_GET['term']));
+
     $tag_conditions = [];
     $conditions = [];
-
-    //check if its a tag
+    // Splitting the tags and search terms
     foreach ($query_terms as $term) {
-        if (substr($term, 0, 1) === "#") {
+        $firstchar = 0;
+        $end = 1;
+        // Check if the first character is a hashtag
+        if (substr($term, $firstchar, $end) === "#") {
             $tag = substr($term, 1, strlen($term) - 1);
-            //$conditions[] = "t.name = '${tag}'";
+
+            // Prescribing the tag sql statement
             $tag_conditions[] = "t.name = '${tag}'";
             continue;
         }
+        // Prepare sql statement for search terms
         $conditions[] = "p.title LIKE ('%$term%')";
         $conditions[] = "p.description LIKE ('%$term%')";
     }
-    # db query
-    if ((count($conditions) > 0) and (count($tag_conditions) > 0)) {
+
+    $terms_tags = ((count($conditions) > 0) and (count($tag_conditions) > 0)) ? TRUE : FALSE;
+    $terms_only = (count($conditions) > 0) ? TRUE : FALSE;
+    $tags_only = (count($tag_conditions) > 0) ? TRUE : FALSE;
+
+    // Determines the appended piece of the sql query based on the search terms and tags
+    if ($terms_tags) {
+        // WHERE ((p.title LIKE ('%blue%') OR p.description LIKE ('%blue%')) AND (t.name = 'blue'))
         $sql .= " WHERE ((" . implode(' OR ', $conditions) . ") AND (" . implode(' OR ', $tag_conditions) . "))";
-    } elseif (count($conditions) > 0) {
+    } elseif ($terms_only) {
+        // WHERE (p.title LIKE ('%blue%') OR p.description LIKE ('%blue%'))
         $sql .= " WHERE (" . implode(' OR ', $conditions) .  ")";
-    } elseif (count($tag_conditions) > 0) {
+    } elseif ($tags_only) {
+        // WHERE (t.name = 'blue')
         $sql .= " WHERE (" . implode(' OR ', $tag_conditions) .  ")";
     }
 }
 
-$sql .= strpos($sql, "WHERE") == false ? " WHERE " : " AND ";
+// Appends the 'AND' if 'WHERE' is present in the sql statement
+$sql .= strpos($sql, "WHERE") === false ? " WHERE " : " AND ";
+// Adds search for public and private posts to the sql statement
 $sql .= " (p.is_public like 1 or u.email like ('$email') )";
 
 //check if we have to filter
