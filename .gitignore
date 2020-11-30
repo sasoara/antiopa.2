@@ -1,3 +1,5 @@
 .DS_Store
 data/
-config/db_config.php
+config/
+.idea/
+*.iml
