@@ -11,7 +11,7 @@ Then the access data will be saved in the `config/db_config.php` file, which sti
 <?php
  $config = [
     'database' => [
-        'host' => '127.0.0.1',
+        'host' => 'localhost',
         'name' => 'antiopa.2',
         'user' => '',
         'password' => ''

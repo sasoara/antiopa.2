@@ -1,89 +1,139 @@
--- MySQL Workbench Forward Engineering
+-- phpMyAdmin SQL Dump
+-- version 4.9.3
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost:8889
+-- Erstellungszeit: 30. Nov 2020 um 13:03
+-- Server-Version: 5.7.26
+-- PHP-Version: 7.4.2
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
 
--- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema antiopa.2
--- -----------------------------------------------------
+--
+-- Datenbank: `antiopa.2`
+--
+CREATE DATABASE IF NOT EXISTS `antiopa.2` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `antiopa.2`;
 
--- -----------------------------------------------------
--- Schema antiopa.2
--- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `antiopa.2` DEFAULT CHARACTER SET utf8mb4 ;
-USE `antiopa.2` ;
+-- --------------------------------------------------------
 
--- -----------------------------------------------------
--- Table `antiopa.2`.`users`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `antiopa.2`.`users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `email` VARCHAR(255) NOT NULL,
-  `pwd` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 14
-DEFAULT CHARACTER SET = utf8mb4;
+--
+-- Tabellenstruktur für Tabelle `posts`
+--
 
+CREATE TABLE `posts` (
+  `id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `date` date NOT NULL,
+  `content_type` varchar(255) NOT NULL,
+  `is_public` tinyint(1) NOT NULL DEFAULT '0',
+  `created_on` datetime NOT NULL,
+  `file_name` varchar(255) NOT NULL,
+  `users_id` int(11) NOT NULL,
+  `secure_file_name` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- -----------------------------------------------------
--- Table `antiopa.2`.`posts`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `antiopa.2`.`posts` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `title` VARCHAR(255) NOT NULL,
-  `description` TEXT NULL DEFAULT NULL,
-  `date` DATE NOT NULL,
-  `content_type` VARCHAR(255) NOT NULL,
-  `is_public` TINYINT(1) NOT NULL DEFAULT '0',
-  `created_on` DATETIME NOT NULL,
-  `file_name` VARCHAR(255) NOT NULL,
-  `users_id` INT NOT NULL,
-  `secure_file_name` VARCHAR(255) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `users_id` (`users_id` ASC) VISIBLE,
-  CONSTRAINT `posts_ibfk_1`
-    FOREIGN KEY (`users_id`)
-    REFERENCES `antiopa.2`.`users` (`id`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 76
-DEFAULT CHARACTER SET = utf8mb4;
+-- --------------------------------------------------------
 
+--
+-- Tabellenstruktur für Tabelle `posts_has_tags`
+--
 
--- -----------------------------------------------------
--- Table `antiopa.2`.`tags`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `antiopa.2`.`tags` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 173
-DEFAULT CHARACTER SET = utf8mb4;
+CREATE TABLE `posts_has_tags` (
+  `posts_id` int(11) NOT NULL,
+  `tags_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
 
--- -----------------------------------------------------
--- Table `antiopa.2`.`posts_has_tags`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `antiopa.2`.`posts_has_tags` (
-  `posts_id` INT NOT NULL,
-  `tags_id` INT NOT NULL,
-  PRIMARY KEY (`posts_id`, `tags_id`),
-  INDEX `tags_id` (`tags_id` ASC) VISIBLE,
-  CONSTRAINT `posts_has_tags_ibfk_1`
-    FOREIGN KEY (`posts_id`)
-    REFERENCES `antiopa.2`.`posts` (`id`),
-  CONSTRAINT `posts_has_tags_ibfk_2`
-    FOREIGN KEY (`tags_id`)
-    REFERENCES `antiopa.2`.`tags` (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+--
+-- Tabellenstruktur für Tabelle `tags`
+--
 
+CREATE TABLE `tags` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `pwd` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Indizes der exportierten Tabellen
+--
+
+--
+-- Indizes für die Tabelle `posts`
+--
+ALTER TABLE `posts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `users_id` (`users_id`);
+
+--
+-- Indizes für die Tabelle `posts_has_tags`
+--
+ALTER TABLE `posts_has_tags`
+  ADD PRIMARY KEY (`posts_id`,`tags_id`),
+  ADD KEY `tags_id` (`tags_id`);
+
+--
+-- Indizes für die Tabelle `tags`
+--
+ALTER TABLE `tags`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indizes für die Tabelle `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT für exportierte Tabellen
+--
+
+--
+-- AUTO_INCREMENT für Tabelle `posts`
+--
+ALTER TABLE `posts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+
+--
+-- AUTO_INCREMENT für Tabelle `tags`
+--
+ALTER TABLE `tags`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=182;
+
+--
+-- AUTO_INCREMENT für Tabelle `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- Constraints der exportierten Tabellen
+--
+
+--
+-- Constraints der Tabelle `posts`
+--
+ALTER TABLE `posts`
+  ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints der Tabelle `posts_has_tags`
+--
+ALTER TABLE `posts_has_tags`
+  ADD CONSTRAINT `posts_has_tags_ibfk_1` FOREIGN KEY (`posts_id`) REFERENCES `posts` (`id`),
+  ADD CONSTRAINT `posts_has_tags_ibfk_2` FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`);
