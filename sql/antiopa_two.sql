@@ -1,8 +1,8 @@
 --
 -- Database `antiopa.2`
 --
-CREATE DATABASE IF NOT EXISTS `antiopa.2`;
-USE `antiopa.2`;
+CREATE DATABASE IF NOT EXISTS `antiopa_two`;
+USE `antiopa_two`;
 
 --
 -- Table structure for table `users`
