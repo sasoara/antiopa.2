@@ -1,139 +1,58 @@
--- phpMyAdmin SQL Dump
--- version 4.9.3
--- https://www.phpmyadmin.net/
 --
--- Host: localhost:8889
--- Erstellungszeit: 30. Nov 2020 um 13:03
--- Server-Version: 5.7.26
--- PHP-Version: 7.4.2
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
+-- Database `antiopa.2`
 --
--- Datenbank: `antiopa.2`
---
-CREATE DATABASE IF NOT EXISTS `antiopa.2` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS `antiopa.2`;
 USE `antiopa.2`;
 
--- --------------------------------------------------------
-
 --
--- Tabellenstruktur für Tabelle `posts`
+-- Table structure for table `users`
 --
-
-CREATE TABLE `posts` (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text,
-  `date` date NOT NULL,
-  `content_type` varchar(255) NOT NULL,
-  `is_public` tinyint(1) NOT NULL DEFAULT '0',
-  `created_on` datetime NOT NULL,
-  `file_name` varchar(255) NOT NULL,
-  `users_id` int(11) NOT NULL,
-  `secure_file_name` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `posts_has_tags`
---
-
-CREATE TABLE `posts_has_tags` (
-  `posts_id` int(11) NOT NULL,
-  `tags_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `tags`
---
-
-CREATE TABLE `tags` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Tabellenstruktur für Tabelle `users`
---
-
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `pwd` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `email` VARCHAR(255) NOT NULL,
+    `pwd` VARCHAR(255) NOT NULL
+)  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
 
 --
--- Indizes der exportierten Tabellen
+-- Table structure for table `posts`
 --
+CREATE TABLE `posts` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `title` VARCHAR(255) NOT NULL,
+    `description` TEXT(1000),
+    `content_type` VARCHAR(255) NOT NULL,
+    `is_public` BOOLEAN NOT NULL DEFAULT 0,
+    `created_on` DATETIME NOT NULL,
+    `file_name` VARCHAR(255) NOT NULL,
+    `users_id` INT NOT NULL,
+    `secure_file_name` VARCHAR(255) NOT NULL,
+    `date` DATE NOT NULL,
+    FOREIGN KEY (`users_id`)
+        REFERENCES `users` (`id`)
+)  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
 
 --
--- Indizes für die Tabelle `posts`
+-- Table structure for table `tags`
 --
-ALTER TABLE `posts`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `users_id` (`users_id`);
+CREATE TABLE `tags` (
+    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL
+)  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
 
 --
--- Indizes für die Tabelle `posts_has_tags`
+-- Table structure for table `posts_has_tags`
 --
-ALTER TABLE `posts_has_tags`
-  ADD PRIMARY KEY (`posts_id`,`tags_id`),
-  ADD KEY `tags_id` (`tags_id`);
+CREATE TABLE `posts_has_tags` (
+    `posts_id` INT NOT NULL,
+    `tags_id` INT NOT NULL,
+    PRIMARY KEY (`posts_id` , `tags_id`),
+    FOREIGN KEY (`posts_id`)
+        REFERENCES `posts` (`id`),
+    FOREIGN KEY (`tags_id`)
+        REFERENCES `tags` (`id`)
+)  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
 
 --
--- Indizes für die Tabelle `tags`
+-- Show database tables `antiopa.2`
 --
-ALTER TABLE `tags`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indizes für die Tabelle `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT für exportierte Tabellen
---
-
---
--- AUTO_INCREMENT für Tabelle `posts`
---
-ALTER TABLE `posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
-
---
--- AUTO_INCREMENT für Tabelle `tags`
---
-ALTER TABLE `tags`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=182;
-
---
--- AUTO_INCREMENT für Tabelle `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
-
---
--- Constraints der exportierten Tabellen
---
-
---
--- Constraints der Tabelle `posts`
---
-ALTER TABLE `posts`
-  ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`users_id`) REFERENCES `users` (`id`);
-
---
--- Constraints der Tabelle `posts_has_tags`
---
-ALTER TABLE `posts_has_tags`
-  ADD CONSTRAINT `posts_has_tags_ibfk_1` FOREIGN KEY (`posts_id`) REFERENCES `posts` (`id`),
-  ADD CONSTRAINT `posts_has_tags_ibfk_2` FOREIGN KEY (`tags_id`) REFERENCES `tags` (`id`);
+-- show tables;
