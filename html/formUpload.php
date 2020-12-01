@@ -34,7 +34,7 @@ include("utils.php");
                         $filename = basename($_FILES["files"]["name"]);
                         //think here could be a security problem because data has all chmod
                         $secure_filename = bin2hex(random_bytes(32));
-                        // save/move the file in the tmp file to delete it later 
+                        // save/move the file in the tmp file to delete it later
                         $secure_filename = "tmp/$secure_filename";
                         //deletes every file left in the tmp dir
                         array_map('unlink', array_filter((array) glob("../data/tmp/*")));
@@ -88,13 +88,13 @@ include("utils.php");
                             ?>
                             <button tabindex="6" onclick="location.href='upload.php?delete=<?php echo $secure_filename ?>'" class="btn" name="cancel">Cancel</button>
 
-                            <?php // TODO: scave button saves datas in db 
+                            <?php // TODO: scave button saves datas in db
                             ?>
                             <button tabindex="5" type="submit" class="btn" name="save">Save</button>
                         </div>
                     </form>
                     <?php
-                    $complete_form =1;
+                    $complete_form = 1;
                     $public = 0;
                     if (isset($_POST['save'])) {
                         $public = ($_POST['public']) == 1 ? 1 : 0;
@@ -116,7 +116,7 @@ include("utils.php");
                             $user_id = $_SESSION['user_id'];
                             $sql_post = "INSERT INTO posts (title, description, date, content_type, created_on, file_name, users_id, secure_file_name, is_public) values ('$title', '$description', '$date', '$mime_type', '$created_on', '$filename', '$user_id', '$secure_filename', '$public');";
                             $dbh->query($sql_post);
-                            //get the id of the last insert 
+                            //get the id of the last insert
                             // not sure if thats secure!
                             $post_id = $dbh->lastInsertId();
                             //go through all the tags and check if they already exist and insert them if not
@@ -136,8 +136,7 @@ include("utils.php");
                             }
                             header("location: detailView.php?id=$post_id");
                             exit;
-                        }
-                        else {
+                        } else {
                             header("location: formUpload.php");
                         }
                     }
