@@ -4,6 +4,9 @@ $page_structure = require_once("page_structure.php");
 $info = require_once("info.php");
 include("utils.php");
 
+$secure_filename = '';
+$filename = '';
+
 ?>
 
 <!DOCTYPE html>
@@ -20,42 +23,40 @@ include("utils.php");
 <body>
     <div class="page-container">
         <div class="content">
-            <?php // header
-            include_once("snippets/header.php");
+            <?php
+            // Header navbar
+            require_once("snippets/header.php");
             ?>
             <div class="block">
                 <?php
                 //check if there is a file
                 if (!empty($_FILES)) {
                     $uploads_dir = '../data/';
-                    // check if the upload succeed
+
+                    // Check if the upload succeed
                     if ($_FILES["files"]["error"] == UPLOAD_ERR_OK) {
+                        // Saves the temporary filename
                         $tmp_name = $_FILES["files"]["tmp_name"];
+                        // Truncates the file type
                         $filename = basename($_FILES["files"]["name"]);
                         //think here could be a security problem because data has all chmod
                         $secure_filename = bin2hex(random_bytes(32));
-                        // save/move the file in the tmp file to delete it later
+                        // Saves and moves the file to the tmp directory to delete it later
                         $secure_filename = "tmp/$secure_filename";
-                        //deletes every file left in the tmp dir
+
+                        // Deletes every file left in the tmp directoru
                         array_map('unlink', array_filter((array) glob("../data/tmp/*")));
+                        // How to name the uploaded file and to which destination it should be moved
                         move_uploaded_file($tmp_name, "$uploads_dir/$secure_filename");
+                        // The content type in text/plain
                         $mime_type = mime_content_type("$uploads_dir/$secure_filename");
-                        showDataTag($mime_type, $secure_filename, $filename);
+
+                        // Returns the HTML tag of the dependent data type
+                        $html_data_tag = showDataTag($mime_type, $secure_filename);
+                        echo $html_data_tag;
                     } else {
                         debug_to_console(" ---error: " . $_FILES['files']['error']);
                     }
-
-                    //IF WE WANT TO HAVE A MULTIUPLOAD
-
-                    // foreach ($_FILES["files"]["error"] as $key => $error) {
-                    //     if ($error == UPLOAD_ERR_OK) {
-                    //         $tmp_name = $_FILES["pictures"]["tmp_name"][$key];
-                    //         // basename() kann Directory-Traversal-Angriffe verhindern;
-                    //         // weitere Validierung/Bereinigung des Dateinamens kann angebracht sein
-                    //         $name = basename($_FILES["pictures"]["name"][$key]);
-                    //         move_uploaded_file($tmp_name, "$uploads_dir/$name");
-                    //     }
-                    // }
                 }
                 ?>
                 <div class="pageheight">
@@ -63,10 +64,10 @@ include("utils.php");
                     ?>
                     <form method="post" id="postForm">
                         <div class="inlineblock">
-                            <input type="hidden" name="secure_filename" value="<?= $secure_filename ?>" required>
-                            <input type="hidden" name="filename" value="<?= $filename ?>" required>
+                            <input type="text" name="secure_filename" value="<?= $secure_filename ?>" hidden>
+                            <input type="text" name="filename" value="<?= $filename ?>" hidden>
                             <input tabindex="1" placeholder="Title" type="text" name="title" class="lightFont blocknormal" required>
-                            <textarea tabindex="2" placeholder="Description" type="text" name="description" class="lightFont blocknormal"></textarea>
+                            <textarea tabindex="2" placeholder="Description" name="description" class="lightFont blocknormal"></textarea>
                         </div>
                         <?php // right container with date and tag field
                         ?>
@@ -74,13 +75,13 @@ include("utils.php");
                             <div class="date">
                                 <input tabindex="3" type="date" name="date" class="lightFont blocknormal" value="<?php echo date('Y-m-d'); ?>" required>
                             </div>
-                            <textarea tabindex="4" type="text" name="tags" placeholder="tags (separated by space; without '#')" class="blocknormal lightFont"></textarea>
+                            <textarea tabindex="4" name="tags" placeholder="tags (separated by space; without '#')" class="blocknormal lightFont"></textarea>
                         </div>
-                        <?php // cancel and save buttons 
+                        <?php // cancel and save buttons
                         ?>
                         <div class="inlineblock">
                             <input type="checkbox" name="public" value="1">
-                            <label for="public" class="lightFont">public</label>
+                            <label id="public" class="lightFont">public</label>
                         </div>
                         <div class="block margin2">
 
@@ -88,7 +89,7 @@ include("utils.php");
                             ?>
                             <button tabindex="6" onclick="location.href='upload.php?delete=<?php echo $secure_filename ?>'" class="btn" name="cancel">Cancel</button>
 
-                            <?php // TODO: scave button saves datas in db
+                            <?php // TODO: saves button saves datas in db
                             ?>
                             <button tabindex="5" type="submit" class="btn" name="save">Save</button>
                         </div>
