@@ -4,6 +4,7 @@
 $page_structure = require_once("page_structure.php");
 $info = require_once("info.php");
 
+// TODO: Issue #7
 // saved image is deleted when user clicks cancel at formUpload.php
 if (!empty($_GET['delete'])) {
     $uploads_dir = '../data/';
