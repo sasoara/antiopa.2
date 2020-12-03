@@ -69,10 +69,11 @@ $sql .= strpos($sql, "WHERE") === false ? " WHERE " : " AND ";
 // Adds search for public and private posts to the sql statement
 $sql .= " (p.is_public like 1 or u.email like ('$email') )";
 
-//check if we have to filter
-
+// Checks the filter
 if (!empty($_GET['filter'])) {
-    $sql .= strpos($sql, "WHERE") == false ? " WHERE (" : " AND (";
+    // Appends the filter statement
+    $sql .= strpos($sql, "WHERE") === false ? " WHERE (" : " AND (";
+
     foreach ($_GET['filter'] as $filter) {
         $sql .= " p.content_type LIKE '" . $validFilters[$filter] . "' OR";
     }
@@ -93,14 +94,27 @@ if (!empty($_GET['sort'])) {
 
     $sql .= " ORDER BY p." . $sort . " " . $orderBY;
 }
-if (!isset($_GET['term'])) $sql .= " LIMIT 10";
+
+// URL term param
+$is_term = (!isset($_GET['term']) or empty($_GET['term']));
+
+// Displaying a limit of posts if in get request param 'term' isn't set
+$displaying_post_limit = " LIMIT 10";
+$sql .= $is_term ? $displaying_post_limit : "";
+
+// The sql query will be completed
 $sql .= ";";
 
+// Executing the sql query
 $posts = $dbh->query($sql);
+
+// Counter
+$display_post_counter = $is_term ? "Found results: " . $posts->rowCount() : "Limit 10";
 ?>
-<?php // number of results
+
+<?php // Post counter
 ?>
-<div class="resultcounter">Found results: <?= $posts->rowCount() ?></div>
+<div class="resultcounter"><?= $display_post_counter ?></div>
 
 <div class="sticky">
     <?php
