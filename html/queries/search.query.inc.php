@@ -8,6 +8,14 @@
 // string variable substitution per complex syntax:
 // https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.double
 
+// TODO: Prüfen ob die Request Anfrage korrekt ist??
+/**
+ * if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+ *      // the request method is fine
+ * } else {
+ *      exit('Invalid Request');
+ * }
+ */
 
 $email = $_SESSION['email'];
 
@@ -65,7 +73,7 @@ if (!empty($_GET['term'])) {
 }
 
 // Appends the 'AND' if 'WHERE' is present in the sql statement
-$sql .= strpos($sql, "WHERE") === false ? " WHERE " : " AND ";
+$sql .= strpos($sql, "WHERE") === false ? " WHERE " : " AND "; // TODO: Braucht es dieses WHERE??
 // Adds search for public and private posts to the sql statement
 $sql .= " (p.is_public like 1 or u.email like ('$email') )";
 
