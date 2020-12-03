@@ -29,7 +29,8 @@ $filename = '';
             ?>
             <div class="block">
                 <?php
-                //check if there is a file
+                // TODO: Hier braucht es eine Content-type verification!!
+                // Check if there is a file
                 if (!empty($_FILES)) {
                     $uploads_dir = '../data/';
 
@@ -39,7 +40,8 @@ $filename = '';
                         $tmp_name = $_FILES["files"]["tmp_name"];
                         // Truncates the file type
                         $filename = basename($_FILES["files"]["name"]);
-                        //think here could be a security problem because data has all chmod
+                        // TODO: Ist hier möglicherweise ein Security bug??
+                        // think here could be a security problem because data has all chmod
                         $secure_filename = bin2hex(random_bytes(32));
                         // Saves and moves the file to the tmp directory to delete it later
                         $secure_filename = "tmp/$secure_filename";
@@ -55,6 +57,7 @@ $filename = '';
                         $html_data_tag = showDataTag($mime_type, $secure_filename);
                         echo $html_data_tag;
                     } else {
+                        // TODO: Verbessern der Error Meldung/Ausgabe!!
                         debug_to_console(" ---error: " . $_FILES['files']['error']);
                     }
                 }
