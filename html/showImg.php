@@ -6,7 +6,7 @@ if (isset($_GET["path"])) {
     $root = $config['web']['root'];
 
     #checks if the realpath contains var/Antiopa/data/
-    if (strpos($image_url, $root.'data/', 0) !== false) {
+    if (strpos($image_url, $root . 'data/', 0) !== false) {
 
         # opens the file
         $handle = fopen($image_url, "rb"); # r for 'read'
@@ -19,9 +19,6 @@ if (isset($_GET["path"])) {
 
         # the mime type that's needed to know of which resource the file is
         $mime_type = mime_content_type($image_url);
-
-        # the contents of the file
-        $http_file = file_get_contents($image_url);
 
         # send the headers
         header('Content-Type: ' . $mime_type);
