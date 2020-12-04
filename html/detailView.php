@@ -53,7 +53,7 @@ $image_dir = "../data/";
                 <a href="showImg.php?path=<?= $secure_file_name ?>&filename=<?= $file_name ?>">
                     <div class="flex">
                         <?php //  new GET request for show file with filename
-                        include("utils.php");
+                        require_once("utils.php");
                         $mime_type = $post['content_type'];
                         showDataTag($mime_type, $secure_file_name, $file_name);
                         ?>
