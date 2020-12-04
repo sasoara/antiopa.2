@@ -2,7 +2,7 @@
 # container for Antiopa web-page, includes header and footer
 $page_structure = require_once("page_structure.php");
 $info = require_once("info.php");
-include("utils.php");
+require_once("utils.php");
 
 $secure_filename = '';
 $filename = '';
