@@ -7,14 +7,6 @@ a {
     text-decoration: none;
 }
 
-.amount-of-tags {
-    display: block;
-    text-align: center;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    font-size: 1.3rem;
-}
-
 /* B */
 body {
     font-family: 'Open Sans', sans-serif;
@@ -213,11 +205,6 @@ input[name="title"] {
     margin-right: 20%;
 }
 
-.details-descr-tag {
-    display: block;
-    margin-left: 20%;
-    margin-right: 20%;
-}
 
 /* E */
 .embed-pdf-file {
@@ -468,37 +455,6 @@ input:required {
 .svgcalendaricon {
     width: 1.5rem;
     margin-left: 5rem;
-}
-
-/* T */
-.tag-col {
-    margin-left: 20%;
-    margin-right: 20%;
-
-    letter-spacing: 0.09rem;
-    word-spacing: 0.1rem;
-    line-height: 1.7rem;
-}
-
-.tag-col-small {
-    text-align: center;
-    padding-left: 0%;
-    padding-right: 0%;
-}
-
-.tag-col-large {
-    text-align: justify;
-    column-count: 3;
-    column-width: 20rem;
-    column-gap: 5rem;
-}
-
-.tagbox {
-    border: 0.1rem solid #E8470B;
-    border-radius: 1rem;
-    padding: 0 1rem 1rem 1rem;
-    font-weight: 100;
-    margin: 2rem 0 0 0;
 }
 
 textarea,

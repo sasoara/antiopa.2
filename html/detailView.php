@@ -6,23 +6,19 @@ $info = require_once("info.php");
 
 if (!empty($_GET['id'])) {
     $postId = htmlspecialchars($_GET['id']);
-    $sql = "SELECT DISTINCT posts.title, posts.description, posts.date, tags.name, posts.file_name, posts.content_type, posts.secure_file_name
+    $sql = "SELECT DISTINCT posts.title, posts.description, posts.date, posts.file_name, posts.content_type, posts.secure_file_name
         FROM posts
-        LEFT JOIN posts_has_tags ON posts.id = posts_has_tags.posts_id
-        LEFT JOIN tags ON posts_has_tags.tags_id = tags.id
         WHERE posts.id = $postId;";
 
     $posts = $dbh->query($sql);
-    $tag_array = array();
-    # $post[0] title, $post[1] description, $post[2] date, $post[3] tag
+    # $post[0] title, $post[1] description, $post[2] date
     foreach ($posts as $post) {
         $title = $post[0];
         $description = $post[1];
         $date = $post[2];
-        array_push($tag_array, $post[3]);
-        $file_name = $post[4];
-        $content_type = $post[5];
-        $secure_file_name = $post[6];
+        $file_name = $post[3];
+        $content_type = $post[4];
+        $secure_file_name = $post[5];
     }
 }
 
@@ -73,24 +69,6 @@ $image_dir = "../data/";
                         <div>
                             <h3>Description</h3>
                             <p><?= $description ?></p>
-                        </div>
-                    <?php
-                    }
-                    ?>
-                    <?php
-                    //check if there are tags, and if there are show them
-                    if ($tag_array[0] != '') {
-                    ?>
-                        <div class="tagbox">
-                            <h3>Tags</h3>
-                            <?php foreach ($tag_array as $tag) {
-                            ?>
-                                <a href="search.php?term=%23<?= $tag ?>">#<?= $tag ?>
-                                </a>
-                            <?php
-                            }
-                            ?>
-                            </a>
                         </div>
                     <?php
                     }
