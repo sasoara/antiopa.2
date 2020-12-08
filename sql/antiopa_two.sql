@@ -26,7 +26,9 @@ CREATE TABLE `posts` (
     `file_name` VARCHAR(255) NOT NULL,
     `users_id` INT NOT NULL,
     `secure_file_name` VARCHAR(255) NOT NULL,
-    `date` DATE NOT NULL
+    `date` DATE NOT NULL,
+    FOREIGN KEY (`users_id`)
+        REFERENCES `users` (`id`)
 )  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
 
 --
