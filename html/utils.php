@@ -14,25 +14,9 @@ function showDataTag(String $mime_type, String $secure_filename)
 ?>
         <img class='imgview' src="showImg.php?path=<?= $secure_filename ?>" alt='Vorschaubild'>
     <?php return;
-    } // Data is a video
-    elseif (strpos($mime_type, 'video/', 0) !== false) {
-    ?>
-        <video autoplay class='imgview' controls poster='imgs/video.png'>
-            <source src='showImg.php?path=<?= $secure_filename ?>'>
-            Sorry, your browser doesn't support embedded videos.
-        </video>
-    <?php
-        return;
-    } // Data is a document with ending .pdf
-    elseif (strpos($mime_type, 'application/pdf', 0) !== false) {
-    ?>
-        <embed class='embed-pdf-file' src='showImg.php?path=<?= $secure_filename ?>' frameboarder='0' scrolling='yes'>
-        </embed>
-    <?php
-        return;
-    } // Data is something else
+    } // Data is something else TODO: Korrekte Error Meldung!!
     else {
-        $path = "./imgs/document.png";
+        $path = "./imgs/warning.svg";
     ?>
         <img class='imgview' src='showImg.php?path=<?= $path ?>' alt='vorschaubild'>
 <?php

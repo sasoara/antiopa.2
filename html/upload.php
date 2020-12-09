@@ -39,7 +39,7 @@ if (!empty($_GET['delete'])) {
                     <label class="btn fileContainer">browse
                         <?php // TODO: XSS Reflected!! onchange ist angreifbar.
                         ?>
-                        <input name="files" onchange="this.form.submit()" type="file" accept="application/*, image/*, video/*">
+                        <input name="files" onchange="this.form.submit()" type="file" accept="image/*">
                     </label>
                 </form>
             </div>
