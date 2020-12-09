@@ -72,13 +72,12 @@ $filename = '';
                             <input tabindex="1" placeholder="Title" type="text" name="title" class="lightFont blocknormal" required>
                             <textarea tabindex="2" placeholder="Description" name="description" class="lightFont blocknormal"></textarea>
                         </div>
-                        <?php // right container with date and tag field
+                        <?php // right container with date field
                         ?>
                         <div class="inlineblock">
                             <div class="date">
                                 <input tabindex="3" type="date" name="date" class="lightFont blocknormal" value="<?php echo date('Y-m-d'); ?>" required>
                             </div>
-                            <textarea tabindex="4" name="tags" placeholder="tags (separated by space; without '#')" class="blocknormal lightFont"></textarea>
                         </div>
                         <?php // cancel and save buttons
                         ?>
@@ -110,12 +109,6 @@ $filename = '';
                             rename("../data/tmp/$secure_filename", "../data/$secure_filename");
                             $mime_type = mime_content_type("../data/$secure_filename");
                             $description = htmlspecialchars($_POST['description']);
-                            $tags = htmlspecialchars($_POST['tags']);
-                            $tag_array = explode(' ', $tags);
-                            //check if there are multiple spaces and replace them with a single space
-                            $tag_array = preg_replace('!\s+!', '', $tag_array);
-                            //remove empty elements from array
-                            $tag_array = array_filter($tag_array);
                             $created_on = date('Y-m-d H:i:s');
                             $user_id = $_SESSION['user_id'];
                             $sql_post = "INSERT INTO posts (title, description, date, content_type, created_on, file_name, users_id, secure_file_name, is_public) values ('$title', '$description', '$date', '$mime_type', '$created_on', '$filename', '$user_id', '$secure_filename', '$public');";
@@ -123,21 +116,6 @@ $filename = '';
                             //get the id of the last insert
                             // not sure if thats secure!
                             $post_id = $dbh->lastInsertId();
-                            //go through all the tags and check if they already exist and insert them if not
-                            foreach ($tag_array as $tag) {
-                                $tag_query = "SELECT * FROM tags WHERE name = '$tag' LIMIT 1;";
-                                $db_tags = $dbh->query($tag_query);
-                                $tags_result = $db_tags->fetch(PDO::FETCH_ASSOC);
-                                if ($tags_result['name'] !== $tag) {
-                                    $sql_tag = "INSERT INTO tags (name) VALUES ('$tag');";
-                                    $dbh->query($sql_tag);
-                                    $tag_id = $dbh->lastInsertId();
-                                } else {
-                                    $tag_id = $tags_result['id'];
-                                }
-                                $sql_post_tag = "INSERT INTO posts_has_tags (posts_id, tags_id) VALUES ($post_id, $tag_id); ";
-                                $dbh->query($sql_post_tag);
-                            }
                             header("location: detailView.php?id=$post_id");
                             exit;
                         } else {

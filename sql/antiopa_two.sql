@@ -1,5 +1,5 @@
 --
--- Database `antiopa.2`
+-- Database `antiopa_two`
 --
 CREATE DATABASE IF NOT EXISTS `antiopa_two`;
 USE `antiopa_two`;
@@ -32,27 +32,6 @@ CREATE TABLE `posts` (
 )  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
 
 --
--- Table structure for table `tags`
---
-CREATE TABLE `tags` (
-    `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL
-)  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
-
---
--- Table structure for table `posts_has_tags`
---
-CREATE TABLE `posts_has_tags` (
-    `posts_id` INT NOT NULL,
-    `tags_id` INT NOT NULL,
-    PRIMARY KEY (`posts_id` , `tags_id`),
-    FOREIGN KEY (`posts_id`)
-        REFERENCES `posts` (`id`),
-    FOREIGN KEY (`tags_id`)
-        REFERENCES `tags` (`id`)
-)  ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
-
---
--- Show database tables `antiopa.2`
+-- Show database tables `antiopa_two`
 --
 -- show tables;

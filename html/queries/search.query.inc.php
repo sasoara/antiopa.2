@@ -24,52 +24,23 @@ $sql = "SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_typ
 
                     FROM posts AS p
 
-                    LEFT JOIN posts_has_tags AS pt ON p.id = pt.posts_id
-
-                    LEFT JOIN tags AS t ON pt.tags_id = t.id
-
                     LEFT JOIN users AS u ON p.users_id = u.id
-
                     ";
 
 if (!empty($_GET['term'])) {
-    // All tags and search terms separated by spaces are saved
+    // All search terms separated by spaces are saved
     $query_terms = explode(' ', htmlspecialchars($_GET['term']));
 
-    $tag_conditions = [];
     $conditions = [];
-    // Splitting the tags and search terms
+    // Splitting the search terms
     foreach ($query_terms as $term) {
-        $firstchar = 0;
-        $end = 1;
-        // Check if the first character is a hashtag
-        if (substr($term, $firstchar, $end) === "#") {
-            $tag = substr($term, 1, strlen($term) - 1);
-
-            // Prescribing the tag sql statement
-            $tag_conditions[] = "t.name = '${tag}'";
-            continue;
-        }
         // Prepare sql statement for search terms
         $conditions[] = "p.title LIKE ('%$term%')";
         $conditions[] = "p.description LIKE ('%$term%')";
     }
 
-    $terms_tags = ((count($conditions) > 0) and (count($tag_conditions) > 0)) ? TRUE : FALSE;
-    $terms_only = (count($conditions) > 0) ? TRUE : FALSE;
-    $tags_only = (count($tag_conditions) > 0) ? TRUE : FALSE;
-
-    // Determines the appended piece of the sql query based on the search terms and tags
-    if ($terms_tags) {
-        // WHERE ((p.title LIKE ('%blue%') OR p.description LIKE ('%blue%')) AND (t.name = 'blue'))
-        $sql .= " WHERE ((" . implode(' OR ', $conditions) . ") AND (" . implode(' OR ', $tag_conditions) . "))";
-    } elseif ($terms_only) {
-        // WHERE (p.title LIKE ('%blue%') OR p.description LIKE ('%blue%'))
-        $sql .= " WHERE (" . implode(' OR ', $conditions) .  ")";
-    } elseif ($tags_only) {
-        // WHERE (t.name = 'blue')
-        $sql .= " WHERE (" . implode(' OR ', $tag_conditions) .  ")";
-    }
+    // WHERE (p.title LIKE ('%blue%') OR p.description LIKE ('%blue%'))
+    $sql .= " WHERE (" . implode(' OR ', $conditions) .  ")";
 }
 
 // Appends the 'AND' if 'WHERE' is present in the sql statement

@@ -7,7 +7,6 @@ $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $search_class_search = $url_path == "/search.php" ? "activeSite" : "";
 $search_class_upload = $url_path == "/upload.php" ? "activeSite" : "";
 $search_class_upload = $url_path == "/formUpload.php" ? "activeSite" : "";
-$search_class_tags = $url_path == "/tags.php" ? "activeSite" : "";
 $search_class_index = $url_path == "/index.php" ? "activeSite" : "";
 
 session_start();
@@ -58,7 +57,6 @@ if (!empty($_GET['logout'])) {
         <ul class="navbar roundshadow">
             <li><a class="<?= $search_class_search ?>" href="search.php"><?= $page_structure["page"]["search"] ?></a></li>
             <li><a class="<?= $search_class_upload ?>" href="upload.php"><?= $page_structure["page"]["upload"] ?></a></li>
-            <li><a class="<?= $search_class_tags ?>" href="tags.php"><?= $page_structure["page"]["tags"] ?></a></li>
             <li><a class="<?= $search_class_index ?>" href="<?= $url_path ?>?logout=true"><?= $page_structure["page"]["logout"] ?></a></li>
         </ul>
     </nav>
