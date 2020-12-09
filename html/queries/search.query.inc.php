@@ -23,7 +23,7 @@ $limitation = isset($_GET['term']) !== TRUE ? "LIMIT 10" : "";
 $sql = "SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_type, p.is_public, p.users_id
 
                     FROM posts AS p
-                        
+
                     LEFT JOIN users AS u ON p.users_id = u.id
                     ";
 
@@ -34,8 +34,6 @@ if (!empty($_GET['term'])) {
     $conditions = [];
     // Splitting the search terms
     foreach ($query_terms as $term) {
-        $firstchar = 0;
-        $end = 1;
         // Prepare sql statement for search terms
         $conditions[] = "p.title LIKE ('%$term%')";
         $conditions[] = "p.description LIKE ('%$term%')";
@@ -43,7 +41,6 @@ if (!empty($_GET['term'])) {
 
     // WHERE (p.title LIKE ('%blue%') OR p.description LIKE ('%blue%'))
     $sql .= " WHERE (" . implode(' OR ', $conditions) .  ")";
-
 }
 
 // Appends the 'AND' if 'WHERE' is present in the sql statement
