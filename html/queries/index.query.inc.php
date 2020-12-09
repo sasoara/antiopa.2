@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file helps to login an existing user.
  * It contains the query that verifies the user's valid email address and password.
