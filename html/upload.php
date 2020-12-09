@@ -38,6 +38,7 @@ if (!empty($_GET['delete'])) {
                 <form action="formUpload.php" enctype="multipart/form-data" method="POST">
                     <label class="btn fileContainer">browse
                         <?php // TODO: XSS Reflected!! onchange ist angreifbar.
+                        // TODO: 'accept' Attribut ist auch nicht sicher vor XSS (Dom-based)!!
                         ?>
                         <input name="files" onchange="this.form.submit()" type="file" accept="image/*">
                     </label>
