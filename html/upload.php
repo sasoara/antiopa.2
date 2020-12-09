@@ -37,6 +37,8 @@ if (!empty($_GET['delete'])) {
                 ?>
                 <form action="formUpload.php" enctype="multipart/form-data" method="POST">
                     <label class="btn fileContainer">browse
+                        <?php // TODO: XSS Reflected!! onchange ist angreifbar.
+                        ?>
                         <input name="files" onchange="this.form.submit()" type="file" accept="application/*, image/*, video/*">
                     </label>
                 </form>
