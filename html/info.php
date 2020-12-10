@@ -1,5 +1,6 @@
 <?php
-require_once("lib/db.php");
+// require_once("lib/db.php");
+require_once(__DIR__ . "/lib/db.php");
 
 function debug_to_console($data)
 {

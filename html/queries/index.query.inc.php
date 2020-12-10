@@ -6,7 +6,7 @@
  */
 
 // Database configuration
-require_once("./lib/db.php");
+require_once(__DIR__ . "/../../html/lib/db.php");
 // Possible error message
 $error = '';
 // Regex for email and password
@@ -38,7 +38,7 @@ if (isset($_POST['login_user'])) {
                 $_SESSION['email'] = $email;
                 $_SESSION['user_id'] = $db_array_results['id'];
                 $_SESSION['stay_logged_in'] = htmlspecialchars($_POST["stayLoggedIn"]); // TODO: htmlspecialchars für eine Checkbox??
-                header('location: search.php');
+                header('location: html/search.php');
             } else {
                 $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
             }

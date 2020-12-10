@@ -1,8 +1,8 @@
 <?php
 // Contains page and footer infos
-$page_structure = require_once("page_structure.php");
+$page_structure = require_once(__DIR__ . "/html/page_structure.php");
 // TODO: Braucht es diese info.php / queries??
-$info = require_once("info.php");
+$info = require_once(__DIR__ . "/html/info.php");
 
 ?>
 <!DOCTYPE html>
@@ -10,7 +10,7 @@ $info = require_once("info.php");
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="./css/stylesheet.css">
+    <link rel="stylesheet" href="html/css/stylesheet.css">
     <title>
         <?php echo $page_structure["page"]["index"] ?>
     </title>
@@ -19,11 +19,11 @@ $info = require_once("info.php");
 <body class="block">
     <?php
     // Register navbar
-    include_once("snippets/header_register.php");
+    include_once(__DIR__ . "/html/snippets/header_register.php");
     ?>
     <div>
         <!-- Logo -->
-        <img class="logo" src="imgs/antiopa.svg" alt="logo">
+        <img class="logo" src="html/imgs/antiopa.svg" alt="logo">
     </div>
     <form class="flex" method="post">
         <input class="lightFont login" type="email" name="email" placeholder="Email" required minlength="6" />
@@ -34,7 +34,7 @@ $info = require_once("info.php");
     </form>
     <?php
     // Database query to sign in
-    require_once('queries/index.query.inc.php')
+    require_once(__DIR__ . "/html/queries/index.query.inc.php")
     ?>
 </body>
 
