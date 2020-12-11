@@ -47,7 +47,7 @@ if (!empty($_GET['logout'])) {
     session_write_close();
     //delete all ser cookies -> copied
     setcookie(session_name(), '', 0, '/');
-    header('location: index.php');
+    header('location: /index.php');
 }
 
 ?>
