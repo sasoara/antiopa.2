@@ -1,5 +1,5 @@
 <?php
-require_once("../config/db_config.php");
+require_once(__DIR__ . "/../../config/db_config.php");
 
 $db_host = $config["database"]["host"];
 $db_database = $config["database"]["name"];

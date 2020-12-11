@@ -1,11 +1,12 @@
 <?php
+
 /**
  * This file helps to login an existing user.
  * It contains the query that verifies the user's valid email address and password.
  */
 
 // Database configuration
-require_once("./lib/db.php");
+require_once(__DIR__ . "/../../html/lib/db.php");
 // Possible error message
 $error = '';
 // Regex for email and password
@@ -24,7 +25,7 @@ if (isset($_POST['login_user'])) {
             // Selects users from the database to check the fit.
             $stmt = $dbh->prepare("SELECT email, pwd, id FROM users WHERE email = :email");
             $email = htmlspecialchars($_POST['email']);
-            $password = $_POST['password']; // TODO: Braucht es hier auch htmlspecialchars()??
+            $password = $_POST['password']; // TODO: Braucht es hier auch htmlspecialchars()?? => @ramboz: Ich denke nicht. Der wird einfach nur gehashed und nicht woanders benutzt
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             $db_array_results = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -37,7 +38,7 @@ if (isset($_POST['login_user'])) {
                 $_SESSION['email'] = $email;
                 $_SESSION['user_id'] = $db_array_results['id'];
                 $_SESSION['stay_logged_in'] = htmlspecialchars($_POST["stayLoggedIn"]); // TODO: htmlspecialchars für eine Checkbox??
-                header('location: search.php');
+                header('location: html/search.php');
             } else {
                 $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
             }
