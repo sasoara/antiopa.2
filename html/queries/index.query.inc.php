@@ -24,7 +24,7 @@ if (isset($_POST['login_user'])) {
             // Selects users from the database to check the fit.
             $stmt = $dbh->prepare("SELECT email, pwd, id FROM users WHERE email = :email");
             $email = htmlspecialchars($_POST['email']);
-            $password = $_POST['password']; // TODO: Braucht es hier auch htmlspecialchars()??
+            $password = $_POST['password']; // TODO: Braucht es hier auch htmlspecialchars()?? => @ramboz: Ich denke nicht. Der wird einfach nur gehashed und nicht woanders benutzt
             $stmt->bindParam(':email', $email);
             $stmt->execute();
             $db_array_results = $stmt->fetch(PDO::FETCH_ASSOC);

@@ -8,6 +8,7 @@ $info = require_once("info.php");
 // saved image is deleted when user clicks cancel at formUpload.php
 if (!empty($_GET['delete'])) {
     $uploads_dir = '../data/';
+    # TODO: Technically, could probably attack the `delete` parameter with `../../etc/passwd` or similar traversal queries
     $file =  htmlspecialchars($_GET['delete']);
     unlink($uploads_dir . $file);
 }

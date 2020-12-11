@@ -2,6 +2,7 @@
 require_once('../config/db_config.php');
 # when get request is a path, save it in var $path
 if (isset($_GET["path"])) {
+    # TODO: Technically, could probably attack the `path` parameter with `../../etc/passwd` or similar traversal queries
     $image_url = realpath("../data/" . ($_GET["path"]));
     $root = $config['web']['root'];
 
@@ -23,6 +24,7 @@ if (isset($_GET["path"])) {
         # send the headers
         header('Content-Type: ' . $mime_type);
         if (isset($_GET["filename"])) {
+            # TODO: Not sure if same attack could be applied to filename, but we could enforce using only the basename
             $filename = htmlspecialchars($_GET["filename"]);
             header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
         }

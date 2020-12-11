@@ -21,6 +21,7 @@ if (isset($_POST['register_user'])) {
         } else {
             // Select users from the database to check for duplex users.
             $stmt = $dbh->prepare("SELECT users.email FROM users WHERE users.email = :email LIMIT 1");
+            // TODO: while we protect the query using a prepared statement, I would still escape to not leak an attacked email in the session on line 39
             $email = $_POST['email'];
             $stmt->bindParam(':email', $email);
             $stmt->execute();

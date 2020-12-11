@@ -6,6 +6,7 @@ $info = require_once("info.php");
 
 if (!empty($_GET['id'])) {
     $postId = htmlspecialchars($_GET['id']);
+    // TODO: my understanding is that `htmlspecialchars` does not escape `;`, so I could technically break the query with `id=1;DROP TABLE posts`. Using a prepared statement would be safer
     $sql = "SELECT DISTINCT posts.title, posts.description, posts.date, posts.file_name, posts.content_type, posts.secure_file_name
         FROM posts
         WHERE posts.id = $postId;";
@@ -59,6 +60,7 @@ $image_dir = "../data/";
                     <div class="flexnormal">
                         <?php //  title and description are read from the foreach loop, on the beginning of this page
                         ?>
+                        <?php // TODO: if either value is corrupted in the DB, then we could risk an XSS. It would be safer to wrap the output in `htmlspecialchars` ?>
                         <h1 class="title"><?= $title ?></h1>
                         <p class="date"><?= $date ?></p>
                     </div>
@@ -68,7 +70,8 @@ $image_dir = "../data/";
                     ?>
                         <div>
                             <h3>Description</h3>
-                            <p><?= $description ?></p>
+                            <?php // TODO: same here ?>
+                        <p><?= $description ?></p>
                         </div>
                     <?php
                     }
