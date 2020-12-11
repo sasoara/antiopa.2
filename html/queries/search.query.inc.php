@@ -29,6 +29,7 @@ $sql = "SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_typ
 
 if (!empty($_GET['term'])) {
     // All search terms separated by spaces are saved
+    // TODO: my understanding is that `htmlspecialchars` does not escape `;`, so I could technically break the query with `term=foo;DROP TABLE posts;`. Using a prepared statement would be safer
     $query_terms = explode(' ', htmlspecialchars($_GET['term']));
 
     $conditions = [];
@@ -46,6 +47,7 @@ if (!empty($_GET['term'])) {
 // Appends the 'AND' if 'WHERE' is present in the sql statement
 $sql .= strpos($sql, "WHERE") === false ? " WHERE " : " AND "; // TODO: Braucht es dieses WHERE??
 // Adds search for public and private posts to the sql statement
+// TODO: Same for `email` here
 $sql .= " (p.is_public like 1 or u.email like ('$email') )";
 
 // Checks the filter
@@ -53,6 +55,7 @@ if (!empty($_GET['filter'])) {
     // Appends the filter statement
     $sql .= strpos($sql, "WHERE") === false ? " WHERE (" : " AND (";
 
+    // TODO: Same for `filter` here
     foreach ($_GET['filter'] as $filter) {
         $sql .= " p.content_type LIKE '" . $validFilters[$filter] . "' OR";
     }
@@ -64,6 +67,7 @@ if (!empty($_GET['filter'])) {
 
 //check if there is a sort condition
 if (!empty($_GET['sort'])) {
+    // TODO: Same for `sort` here
     $sort = htmlspecialchars($_GET['sort']);
 
     $orderBY = empty($_GET['orderby']) ? "asc" :  htmlspecialchars($_GET['orderby']);
@@ -99,6 +103,7 @@ $display_post_counter = $is_term ? "Found results: " . $posts->rowCount() : "Lim
     <?php
     $baseURL = "/search.php";
     $searchURL = isset($_GET['term']) ? "&term=" . urlencode(htmlspecialchars($_GET['term'])) : "";
+    // TODO: It would be safer to protect `$filterURL` so we don't forward an "attack" in the links below
     $filterURL = $filterURL != "" ? "&filter%5B%5D=" . $filterURL : "";
     $sortURL_date = "?sort=date&orderby=";
     $sortURL_abc = "?sort=title&orderby=";
