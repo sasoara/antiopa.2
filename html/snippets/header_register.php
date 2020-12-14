@@ -11,9 +11,13 @@ if (session_status() !== PHP_SESSION_ACTIVE or session_status() == PHP_SESSION_N
 
 ?>
 
+<?php // Menu
+?>
 <header>
     <nav class="flex">
         <ul class="navbar navbar_register roundshadow">
+            <?php // TODO: OWASP #5 Fehlerhafte Zugriffskontrolle
+            ?>
             <li><a class="<?= $search_class_index ?>" href="/index.php"><?= $page_structure["page"]["index"] ?></a></li>
             <li><a class="<?= $search_class_register ?>" href="/register.php"><?= $page_structure["page"]["register"] ?></a></li>
         </ul>
