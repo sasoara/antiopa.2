@@ -128,7 +128,7 @@ $filename = '';
         </div>
 
         <?php // footer
-        include_once("snippets/footer.php");
+        require_once("snippets/footer.php");
         ?>
     </div>
 </body>

@@ -4,9 +4,9 @@ date_default_timezone_set("Europe/Zurich");
 
 $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-$search_class_search = $url_path == "/search.php" ? "activeSite" : "";
-$search_class_upload = $url_path == "/upload.php" ? "activeSite" : "";
-$search_class_upload = $url_path == "/formUpload.php" ? "activeSite" : "";
+$search_class_search = $url_path == "/html/search.php" ? "activeSite" : "";
+$search_class_upload = $url_path == "/html/upload.php" ? "activeSite" : "";
+$search_class_upload_form = $url_path == "/html/formUpload.php" ? "activeSite" : "";
 $search_class_index = $url_path == "/index.php" ? "activeSite" : "";
 
 session_start();
@@ -24,7 +24,7 @@ if (!$_SESSION['stay_logged_in']) {
         session_destroy();
         session_write_close();
         setcookie(session_name(), '', 0, '/');
-        header('location: index.php');
+        header('location: ../index.php');
         exit;
     } // otherwise, the request time will be updated by time
     else {
@@ -34,7 +34,7 @@ if (!$_SESSION['stay_logged_in']) {
 
 //if there is no active or email session then you get back to the login page
 if (session_status() !== PHP_SESSION_ACTIVE or !$_SESSION['email'] or session_status() == PHP_SESSION_NONE) {
-    header('location: index.php');
+    header('location: ../index.php');
 }
 
 // destroy the session and get back to the login
@@ -47,7 +47,7 @@ if (!empty($_GET['logout'])) {
     session_write_close();
     //delete all ser cookies -> copied
     setcookie(session_name(), '', 0, '/');
-    header('location: /index.php');
+    header('location: ../index.php');
 }
 
 ?>
@@ -56,7 +56,7 @@ if (!empty($_GET['logout'])) {
     <nav class="flex">
         <ul class="navbar roundshadow">
             <li><a class="<?= $search_class_search ?>" href="search.php"><?= $page_structure["page"]["search"] ?></a></li>
-            <li><a class="<?= $search_class_upload ?>" href="upload.php"><?= $page_structure["page"]["upload"] ?></a></li>
+            <li><a class="<?= $search_class_upload . $search_class_upload_form ?>" href="upload.php"><?= $page_structure["page"]["upload"] ?></a></li>
             <li><a class="<?= $search_class_index ?>" href="<?= $url_path ?>?logout=true"><?= $page_structure["page"]["logout"] ?></a></li>
         </ul>
     </nav>

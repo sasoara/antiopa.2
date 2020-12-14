@@ -1,6 +1,9 @@
 # Secure Antiopa 2.0 project
 A place where an user can collect and organize, found images.
 
+## Root placement
+The server root needs to be placed on the antiopa.2 git folder.
+
 ## Database
 The database should be created first:
 Execute `sql/antiopa.2.sql`.
