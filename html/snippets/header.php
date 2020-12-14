@@ -3,6 +3,7 @@
 date_default_timezone_set("Europe/Zurich");
 
 $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+debug_to_console($url_path);
 
 $search_class_search = $url_path == "/html/search.php" ? "activeSite" : "";
 $search_class_upload = $url_path == "/html/upload.php" ? "activeSite" : "";

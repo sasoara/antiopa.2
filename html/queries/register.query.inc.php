@@ -6,7 +6,7 @@
  */
 
 // Database configuration
-require_once("./lib/db.php");
+require_once(__DIR__ . "/../../html/lib/db.php");
 // Possible error message
 $error = '';
 // POST request method - check(login_user)
