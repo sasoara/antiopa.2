@@ -1,6 +1,5 @@
 <?php
 $url_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-debug_to_console($url_path);
 
 $search_class_index = $url_path == "/index.php" ? "activeSite" : "";
 $search_class_register = $url_path == "/register.php" ? "activeSite" : "";
