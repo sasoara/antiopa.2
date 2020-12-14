@@ -43,7 +43,7 @@ $image_dir = "../data/";
     <div class="page-container">
         <div class="content">
             <?php // header
-            include_once("snippets/header.php");
+            require_once("snippets/header.php");
             ?>
             <div class="block">
                 <a href="showImg.php?path=<?= $secure_file_name ?>&filename=<?= $file_name ?>">
@@ -78,7 +78,7 @@ $image_dir = "../data/";
         </div>
 
         <?php // footer
-        include_once("snippets/footer.php");
+        require_once("snippets/footer.php");
         ?>
     </div>
 </body>

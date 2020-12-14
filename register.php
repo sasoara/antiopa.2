@@ -22,7 +22,7 @@ $info = require_once("html/info.php");
         <div class="content">
             <?php
             // Register navbar
-            include_once("html/snippets/header_register.php");
+            require_once("html/snippets/header_register.php");
             ?>
             <div class="block setDown">
                 <h1>Register</h1>
@@ -43,7 +43,7 @@ $info = require_once("html/info.php");
 
         <?php
         // Footer
-        include_once("html/snippets/footer.php");
+        require_once("html/snippets/footer.php");
         ?>
     </div>
 </body>
