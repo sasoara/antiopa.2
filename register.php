@@ -1,8 +1,8 @@
 <?php
 // Contains page and footer infos
-$page_structure = require_once("page_structure.php");
+$page_structure = require_once("html/page_structure.php");
 // TODO: Braucht es diese info.php / queries??
-$info = require_once("info.php");
+$info = require_once("html/info.php");
 
 ?>
 
@@ -11,7 +11,7 @@ $info = require_once("info.php");
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/stylesheet.css">
+    <link rel="stylesheet" href="html/css/stylesheet.css">
     <title>
         <?php echo $page_structure["page"]["register"]; ?>
     </title>
@@ -22,7 +22,7 @@ $info = require_once("info.php");
         <div class="content">
             <?php
             // Register navbar
-            include_once("snippets/header_register.php");
+            require_once("html/snippets/header_register.php");
             ?>
             <div class="block setDown">
                 <h1>Register</h1>
@@ -36,14 +36,14 @@ $info = require_once("info.php");
             <div class="push-notification-error">
                 <?php
                 // Database query to register
-                require_once('queries/register.query.inc.php')
+                require_once('html/queries/register.query.inc.php')
                 ?>
             </div>
         </div>
 
         <?php
         // Footer
-        include_once("snippets/footer.php");
+        require_once("html/snippets/footer.php");
         ?>
     </div>
 </body>

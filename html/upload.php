@@ -29,7 +29,7 @@ if (!empty($_GET['delete'])) {
     <div class="page-container">
         <div class="content">
             <?php // header
-            include_once("snippets/header.php");
+            require_once("snippets/header.php");
             ?>
             <div class="block setDown">
                 <h1 class="flex">Upload</h1>
@@ -44,7 +44,7 @@ if (!empty($_GET['delete'])) {
             </div>
         </div>
         <?php
-        include_once("snippets/footer.php");
+        require_once("snippets/footer.php");
         ?>
     </div>
 </body>

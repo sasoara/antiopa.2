@@ -19,7 +19,7 @@ $info = require_once(__DIR__ . "/html/info.php");
 <body class="block">
     <?php
     // Register navbar
-    include_once(__DIR__ . "/html/snippets/header_register.php");
+    require_once(__DIR__ . "/html/snippets/header_register.php");
     ?>
     <div>
         <!-- Logo -->
