@@ -4,8 +4,7 @@ $page_structure = require_once("page_structure.php");
 $info = require_once("info.php");
 require_once("utils.php");
 
-$secure_filename = '';
-$filename = '';
+$filename = "";
 
 ?>
 
@@ -29,37 +28,38 @@ $filename = '';
             ?>
             <div class="block">
                 <?php
+                $allowed_type = 'image/';
                 // TODO: Hier braucht es eine Content-type verification!!
-                // Check if there is a file
-                if (!empty($_FILES)) {
-                    $uploads_dir = '../data/';
-
-                    // Check if the upload succeed
-                    if ($_FILES["files"]["error"] == UPLOAD_ERR_OK) {
-                        // Saves the temporary filename
-                        $tmp_name = $_FILES["files"]["tmp_name"];
-                        // Truncates the file type
-                        $filename = basename($_FILES["files"]["name"]);
-                        // TODO: Ist hier möglicherweise ein Security bug??
-                        // think here could be a security problem because data has all chmod
-                        $secure_filename = bin2hex(random_bytes(32));
-                        // Saves and moves the file to the tmp directory to delete it later
-                        $secure_filename = "tmp/$secure_filename";
-
-                        // Deletes every file left in the tmp directoru
-                        array_map('unlink', array_filter((array) glob("../data/tmp/*")));
-                        // How to name the uploaded file and to which destination it should be moved
-                        move_uploaded_file($tmp_name, "$uploads_dir/$secure_filename");
-                        // The content type in text/plain
-                        $mime_type = mime_content_type("$uploads_dir/$secure_filename");
-
-                        // Returns the HTML tag of the dependent data type
-                        $html_data_tag = showDataTag($mime_type, $secure_filename);
-                        echo $html_data_tag;
-                    } else {
-                        // TODO: Verbessern der Error Meldung/Ausgabe!!
-                        debug_to_console(" ---error: " . $_FILES['files']['error']);
+                // Check if we've uploaded an image file
+                if ((!empty($_FILES['image'])) && ($_FILES['image']['error'] == UPLOAD_ERR_OK)) { // && (strpos($_FILES['image']['type'], $allowed_type, 0))
+                    $uploads_temp_dir = "./../data/tmp/";
+                    $uploads_dir = "./../data/";
+                    // Attributes of uploaded image
+                    $image = array(
+                        "filename" => $_FILES['image']['name'],
+                        "temp_filename" => $_FILES['image']['tmp_name'],
+                        "mime_type" => $_FILES['image']['type'],
+                        "size" => $_FILES['image']['size'] // (in bytes)
+                    );
+                    // Be sure we're dealing with an upload
+                    if (is_uploaded_file($image['temp_filename']) === false) {
+                        throw new \Exception('Error on upload: Invalid file definition');
                     }
+                    // Rename the uploaded file
+                    $ext = strtolower(substr($image['filename'], strripos($image['filename'], '.') + 1));
+                    // TODO: Ist hier möglicherweise ein Security bug??
+                    // think here could be a security problem because data has all chmod
+                    $filename = bin2hex(random_bytes(16)) . '.' . $ext;
+
+                    // Insert it into our tracking along with the secure name
+                    move_uploaded_file($image['temp_filename'], $uploads_temp_dir . $filename);
+
+                    // Returns the HTML image tag
+                    $html_data_tag = showDataTag($image['mime_type'], $filename);
+                    echo $html_data_tag;
+                } else {
+                    // TODO: Verbessern der Error Meldung/Ausgabe!!
+                    debug_to_console(" ---error: " . $_FILES['image']['error']);
                 }
                 ?>
                 <div class="pageheight">
@@ -67,7 +67,7 @@ $filename = '';
                     ?>
                     <form method="post" id="postForm">
                         <div class="inlineblock">
-                            <input type="text" name="secure_filename" value="<?= $secure_filename ?>" hidden>
+                            <input type="text" name="secure_filename" value="<?= $filename ?>" hidden>
                             <input type="text" name="filename" value="<?= $filename ?>" hidden>
                             <input tabindex="1" placeholder="Title" type="text" name="title" class="lightFont blocknormal" required>
                             <textarea tabindex="2" placeholder="Description" name="description" class="lightFont blocknormal"></textarea>
@@ -89,7 +89,7 @@ $filename = '';
 
                             <?php // deletes specified file by clicking on cancel and redirects you to the upload.php page
                             ?>
-                            <button tabindex="6" onclick="location.href='upload.php?delete=<?php echo $secure_filename ?>'" class="btn" name="cancel">Cancel</button>
+                            <button tabindex="6" onclick="location.href='upload.php?delete=<?php echo $filename ?>'" class="btn" name="cancel">Cancel</button>
 
                             <?php // TODO: saves button saves datas in db
                             ?>
