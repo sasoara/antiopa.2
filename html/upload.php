@@ -40,14 +40,17 @@ if (!empty($_GET['delete'])) {
                 <?php // Button that allows user to choose an image
                 ?>
                 <form action="formUpload.php" enctype="multipart/form-data" method="POST">
+                    <?php
+                    // TODO: XSS Reflected!! onchange ist angreifbar.
+                    // TODO: 'accept' Attribut ist auch nicht sicher vor XSS (Dom-based)!!
+                    ?>
                     <label class="btn fileContainer">browse
-                        <?php // TODO: XSS Reflected!! onchange ist angreifbar.
-                        // TODO: 'accept' Attribut ist auch nicht sicher vor XSS (Dom-based)!!
-                        ?>
-                        <input name="image" onchange="this.form.submit()" type="file" accept="image/*">
+                        <input name="image" type="file" accept="image/*">
+                    </label>
+                    <label class="btn fileContainer">submit
+                        <input name="submit" type="submit">
                     </label>
                 </form>
-
             </div>
         </div>
 
