@@ -10,3 +10,4 @@ $dsn = "mysql:host={$db_host};dbname={$db_database}";
 
 $options = array();
 $dbh = new PDO($dsn, $db_user, $db_password, $options);
+$dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
