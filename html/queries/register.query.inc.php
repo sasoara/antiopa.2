@@ -28,7 +28,7 @@ if (isset($_POST['register_user'])) {
             $db_email_result = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Insert registering user into database, if he are not existing yet.
-            if (!$db_email_result['email'] == $email) {
+            if (!$db_email_result) {
                 $stmt = $dbh->prepare("INSERT INTO users (email, pwd) values (:email, :pwd_hash)");
                 $email = $_POST['email'];
                 $pwd_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
@@ -39,7 +39,7 @@ if (isset($_POST['register_user'])) {
                 $_SESSION['email'] = $email;
                 $_SESSION['user_id'] = $db_array_results['id'];
                 $_SESSION['stay_logged_in'] = false;
-                header('location: search.php');
+                header('location: html/search.php');
             } else {
                 $error = "Email already exists, try again!"; // TODO: Ist das eine gute / schlechte Fehlermeldung??
             }
