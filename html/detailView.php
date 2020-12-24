@@ -5,7 +5,21 @@ $page_structure = require_once("page_structure.php");
 $info = require_once("info.php");
 
 if (!empty($_GET['id'])) {
+
+
+    $stmt = $dbh->prepare("SELECT DISTINCT title, description, date, file_name, content_type, secure_file_name FROM posts WHERE id = :id");
     $postId = htmlspecialchars($_GET['id']);
+    $stmt->bindParam(':id', $postId);
+    $stmt->execute();
+    $post_result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    debug_to_console($post_result['date']);
+    debug_to_console("Hallo");
+
+
+
+
+    /* $postId = htmlspecialchars($_GET['id']);
     // TODO: my understanding is that `htmlspecialchars` does not escape `;`, so I could technically break the query with `id=1;DROP TABLE posts`. Using a prepared statement would be safer
     $sql = "SELECT DISTINCT posts.title, posts.description, posts.date, posts.file_name, posts.content_type, posts.secure_file_name
         FROM posts
@@ -20,7 +34,7 @@ if (!empty($_GET['id'])) {
         $file_name = $post[3];
         $content_type = $post[4];
         $secure_file_name = $post[5];
-    }
+    } */
 }
 
 
@@ -47,12 +61,13 @@ $image_dir = "../data/";
             require_once("snippets/header.php");
             ?>
             <div class="block">
-                <a href="showImg.php?path=<?= $secure_file_name ?>&filename=<?= $file_name ?>">
+                <a href="showImg.php?path=../<?= $post_result['file_name'] ?>">
+                    <?php debug_to_console('post_result: ' . $post_result['file_name']); ?>
                     <div class="flex">
                         <?php //  new GET request for show file with filename
                         require_once("utils.php");
                         $mime_type = $post['content_type'];
-                        showDataTag($mime_type, $secure_file_name, $file_name);
+                        showDataTag($mime_type, $file_name);
                         ?>
                     </div>
                 </a>
@@ -60,7 +75,8 @@ $image_dir = "../data/";
                     <div class="flexnormal">
                         <?php //  title and description are read from the foreach loop, on the beginning of this page
                         ?>
-                        <?php // TODO: if either value is corrupted in the DB, then we could risk an XSS. It would be safer to wrap the output in `htmlspecialchars` ?>
+                        <?php // TODO: if either value is corrupted in the DB, then we could risk an XSS. It would be safer to wrap the output in `htmlspecialchars`
+                        ?>
                         <h1 class="title"><?= $title ?></h1>
                         <p class="date"><?= $date ?></p>
                     </div>
@@ -70,8 +86,9 @@ $image_dir = "../data/";
                     ?>
                         <div>
                             <h3>Description</h3>
-                            <?php // TODO: same here ?>
-                        <p><?= $description ?></p>
+                            <?php // TODO: same here
+                            ?>
+                            <p><?= $description ?></p>
                         </div>
                     <?php
                     }
