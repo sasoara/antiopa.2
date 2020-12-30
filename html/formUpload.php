@@ -9,8 +9,7 @@ $info = require_once("info.php");
 // Helper function to display image data html tag
 require_once("utils.php");
 
-// The value from POST, the form input field from type file
-$userfile = $_FILES['image'];
+
 // Mime content type which is allowed
 $allowed_type = 'image/';
 // The place the files will be uploaded to (currently a 'temporary' directory)
@@ -20,12 +19,16 @@ $uploaddir = "../data/";
 # TODO: Eine maximale Uploadgrösse festlegen und prüfen!!
 // Maximum filesize in BYTES (currently 2MB)
 $maxsize = 2097152;
-// The named image in html entities
-$filename = htmlspecialchars($userfile['name']);
-// Get the name of the file (including file extension)
-$ext = strtolower(substr($filename, strpos($filename, '.'), strlen($filename) - 1));
 
-if ($userfile) {
+debug_to_console(var_dump($_FILES) . " = FILES");
+if (isset($_FILES['image'])) {
+    // The value from POST, the form input field from type file
+    $userfile = $_FILES['image'];
+    // The named image in html entities
+    $filename = htmlspecialchars($userfile['name']);
+    // Get the name of the file (including file extension)
+    $ext = strtolower(substr($filename, strpos($filename, '.'), strlen($filename) - 1));
+
 
     if (isset($_POST['submit'])) {
         // The secure renamed image file
@@ -85,14 +88,24 @@ if ($userfile) {
             require_once("snippets/header.php");
             ?>
             <div class="block">
-                <?php showDataTag($userfile['type'], $secure_filename) ?>
+                <?php
+                if (isset($_FILES['image'])) {
+                    showDataTag($_FILES['image']['type'], $secure_filename);
+                }
+                ?>
                 <div class="pageheight">
                     <?php // left container with title and description field
                     ?>
                     <form method="post" id="postForm">
                         <div class="inlineblock">
-                            <input type="text" name="secure_filename" value="<?= $secure_filename ?>" hidden>
-                            <input type="text" name="filename" value="<?= $filename ?>" hidden>
+                            <input type="text" name="secure_filename" value="<?php
+                                                                                if (isset($_FILES['image'])) {
+                                                                                    $secure_filename;
+                                                                                } ?>" hidden>
+                            <input type="text" name="filename" value="<?php
+                                                                        if (isset($_FILES['image'])) {
+                                                                            $filename;
+                                                                        } ?>" hidden>
                             <input tabindex="1" placeholder="Title" type="text" name="title" class="lightFont blocknormal" required>
                             <textarea tabindex="2" placeholder="Description" name="description" class="lightFont blocknormal"></textarea>
                         </div>
@@ -113,8 +126,10 @@ if ($userfile) {
 
                             <?php // deletes specified file by clicking on cancel and redirects you to the upload.php page
                             ?>
-                            <button tabindex="6" onclick="location.href='upload.php?delete=<?php echo $secure_filename ?>'" class="btn" name="cancel">Cancel</button>
-
+                            <button tabindex="6" onclick="location.href='upload.php?delete=<?php
+                                                                                            if (isset($_FILES['image'])) {
+                                                                                                echo $secure_filename;
+                                                                                            } ?>'" class="btn" name="cancel">Cancel</button>
                             <?php // TODO: saves button saves datas in db
                             ?>
                             <button tabindex="5" type="submit" class="btn" name="save">Save</button>
@@ -123,13 +138,13 @@ if ($userfile) {
 
                     <?php
                     // True, when required fields are filled
-                    $complete_form = 1;
+                    $complete_form = true;
                     // If the user choose public post
                     $visibility_pub = 0;
 
                     // Save button to store the image
                     if (isset($_POST['save'])) {
-                        $visibility_pub = ($_POST['public']) == 1 ? 1 : 0;
+                        $visibility_pub = (isset($_POST['public'])) ? 1 : 0;
                         !empty($_POST['date']) ? $date = htmlspecialchars($_POST['date']) : $complete_form = false;
                         !empty($_POST['title']) ? $title = htmlspecialchars($_POST['title']) : $complete_form = false;
                         !empty($_POST['secure_filename']) ? $secure_filename = htmlspecialchars($_POST['secure_filename']) : $complete_form = false;
