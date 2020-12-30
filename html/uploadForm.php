@@ -37,8 +37,8 @@ require_once("snippets/display_image.php");
 
             ?>
             <div class="block">
-                <!-- Bild -->
                 <?php
+                // Image
                 displayImage($mime_type, $upload_tmp_dir . $secure_filename);
                 ?>
                 <div class="pageheight">
@@ -58,7 +58,7 @@ require_once("snippets/display_image.php");
                                     <input tabindex="3" type="date" name="date" class="lightFont blocknormal" value="<?php echo date('Y-m-d'); ?>" required>
                                 </div>
                                 <div>
-                                    <input type="checkbox" name="public" value="1">
+                                    <input type="checkbox" name="public">
                                     <label id="public" class="lightFont">public</label>
                                 </div>
                             </div>

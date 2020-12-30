@@ -8,6 +8,8 @@ $page_structure = require_once("page_structure.php");
 //Helper function to display image data html tag
 require_once("snippets/display_image.php");
 
+# TODO: Validierung / Zugriffsrecht auf Bild privat / öffentlich
+
 if (!empty($_GET['id'])) {
     $stmt = $dbh->prepare("SELECT DISTINCT title, description, date, file_name, content_type, secure_file_name FROM posts WHERE id = :id");
     $postId = htmlspecialchars($_GET['id']);
