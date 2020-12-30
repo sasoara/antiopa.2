@@ -1,7 +1,8 @@
 <?php
-// require_once("lib/db.php");
+// Database connection
 require_once(__DIR__ . "/lib/db.php");
 
+// Debug function
 function debug_to_console($data)
 {
     $output = $data;
@@ -10,3 +11,6 @@ function debug_to_console($data)
 
     echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
 }
+
+# TODO: Implementieren von Audit Funktion!!
+# TODO: Implementieren von Logger Funktion!!

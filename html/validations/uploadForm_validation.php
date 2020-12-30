@@ -1,5 +1,6 @@
 <?php
-// save handling / delete handling
+// Presents base services
+$info = require_once("../info.php");
 
 // Sessionhandling
 session_start();
@@ -26,8 +27,6 @@ if (session_status() !== PHP_SESSION_ACTIVE or !$_SESSION['email'] or session_st
     header('location: ../../index.php');
 }
 
-// Enables debugging
-$info = require_once("../info.php");
 
 // The place the files will be uploaded to (currently a 'temporary' directory)
 $upload_temp_dir = "../../data/tmp/";
@@ -99,15 +98,33 @@ if (isset($_POST['save'])) {
             # TODO: Logger!!
             debug_to_console($e);
         }
+        cleanSessionData();
         // Redirecting to detailed view
         header("location: ../detailView.php?id=$post_id");
     }
 } else if (isset($_POST['cancel'])) {
-    # code...
+    if (!empty($_SESSION['data'][1])) {
+        $secure_filename = htmlspecialchars($_SESSION['data'][1]);
+        unlink($upload_temp_dir . $secure_filename);
+        cleanSessionData();
+        header("location: ../upload.php");
+    } else {
+        cleanSessionData();
+        # TODO: Logger!!
+        debug_to_console("No secure filename presented");
+    }
 } else {
+    cleanSessionData();
     # TODO: Logger!!
     debug_to_console("Invalid function!");
 }
+
+// To destroy image data in session
+function cleanSessionData()
+{
+    unset($_SESSION['data']);
+}
+
 ?>
 
 <html>

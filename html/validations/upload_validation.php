@@ -1,5 +1,6 @@
 <?php
-// handle 'submit' of upload.php form
+// Presents base services
+$info = require_once("../info.php");
 
 // Sessionhandling
 session_start();
@@ -25,9 +26,6 @@ if (!$_SESSION['stay_logged_in']) {
 if (session_status() !== PHP_SESSION_ACTIVE or !$_SESSION['email'] or session_status() == PHP_SESSION_NONE) {
     header('location: ../../index.php');
 }
-
-// Enables debugging
-$info = require_once("../info.php");
 
 // Mime content type which is allowed
 $allowed_type = 'image/';

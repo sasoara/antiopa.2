@@ -1,10 +1,10 @@
 <?php
+// Presents base services
+$info = require_once("info.php");
+
 // Contains page and footer infos
 $page_structure = require_once("page_structure.php");
 
-// Queries for filtering and sorting
-// TODO: Braucht es diese info.php / queries??
-$info = require_once("info.php");
 
 // TODO: Issue #7
 // saved image is deleted when user clicks cancel at formUpload.php
