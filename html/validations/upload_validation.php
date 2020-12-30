@@ -1,6 +1,30 @@
 <?php
 // handle 'submit' of upload.php form
-# TODO: Sessionhandling muss eingebunden werden!!
+
+// Sessionhandling
+session_start();
+// if the user does not select the field 'stay logged in', it is automatically logged out
+if (!$_SESSION['stay_logged_in']) {
+    // sets the login time as request time, if it is empty
+    if (!isset($_SESSION['LAST_REQUEST_TIME'])) {
+        $_SESSION['LAST_REQUEST_TIME'] = time();
+    }
+    // destroys the session if the request time was longer than 30 minutes
+    if ($_SESSION['LAST_REQUEST_TIME'] + 30 * 60 < time()) {
+        session_destroy();
+        session_write_close();
+        setcookie(session_name(), '', 0, '/');
+        header('location: ../../index.php');
+        exit;
+    } // otherwise, the request time will be updated by time
+    else {
+        $_SESSION['LAST_REQUEST_TIME'] = time();
+    }
+}
+// if there is no active or email session then you get back to the login page
+if (session_status() !== PHP_SESSION_ACTIVE or !$_SESSION['email'] or session_status() == PHP_SESSION_NONE) {
+    header('location: ../../index.php');
+}
 
 // Enables debugging
 $info = require_once("../info.php");
@@ -51,9 +75,18 @@ if (!empty($userfile) && ($userfile['error'] == UPLOAD_ERR_OK) && (strpos($userf
     // Insert it into our tracking along with the secure name
     move_uploaded_file($userfile['tmp_name'], $upload_temp_dir . $secure_filename);
 
-    $data = array([$filename, $secure_filename, $mime_type]);
+    $data = array($filename, $secure_filename, $mime_type);
 
     # TODO: Param Übergabe an uploadForm.php
+
+    // Write data in session
+    if (empty($_SESSION['data'])) {
+        $_SESSION['data'] = $data;
+    } else {
+        $_SESSION['data'] = $data;
+        # TODO: Logger!!
+        debug_to_console("Session 'data' isn't empty!");
+    }
 
     // Redirect with POST request
     header("Location: ../uploadForm.php");

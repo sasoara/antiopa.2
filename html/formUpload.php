@@ -6,8 +6,7 @@ $page_structure = require_once("page_structure.php");
 // Queries for filtering and sorting
 $info = require_once("info.php");
 
-// Helper function to display image data html tag
-require_once("utils.php");
+
 
 
 // Mime content type which is allowed
@@ -88,11 +87,7 @@ if (isset($_FILES['image'])) {
             require_once("snippets/header.php");
             ?>
             <div class="block">
-                <?php
-                if (isset($_FILES['image'])) {
-                    showDataTag($_FILES['image']['type'], $secure_filename);
-                }
-                ?>
+
                 <div class="pageheight">
                     <?php // left container with title and description field
                     ?>
