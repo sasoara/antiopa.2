@@ -14,6 +14,6 @@ if (isset($_GET["path"])) {
     header('Pragma: public');
     header('Content-Length: ' . filesize($image_url));
     header('Content-Type: ' . mime_content_type($image_url));
-    fpassthru(readfile($image_url));
+    readfile($image_url);
 }
 exit;
