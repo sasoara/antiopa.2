@@ -32,11 +32,14 @@ require_once("snippets/display_image.php");
             $filename = $_SESSION['data'][0];
             $secure_filename = $_SESSION['data'][1];
             $mime_type = $_SESSION['data'][2];
+
+            $upload_tmp_dir = "../data/tmp/";
+
             ?>
             <div class="block">
                 <!-- Bild -->
                 <?php
-                displayImage($mime_type, $secure_filename);
+                displayImage($mime_type, $upload_tmp_dir . $secure_filename);
                 ?>
                 <div class="pageheight">
                     <?php // Left container with title and description field

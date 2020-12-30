@@ -3,7 +3,7 @@ require_once('../config/db_config.php');
 # when get request is a path, save it in var $path
 if (isset($_GET["path"])) {
     // TODO: Technically, could probably attack the `path` parameter with `../../etc/passwd` or similar traversal queries
-    $image_url = realpath("../data/tmp/" . htmlspecialchars($_GET["path"]));
+    $image_url = realpath(htmlspecialchars($_GET["path"]));
 
     /* Send headers and file to visitor */
     header('Content-Description: File Transfer');

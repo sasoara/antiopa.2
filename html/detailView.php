@@ -16,6 +16,12 @@ if (!empty($_GET['id'])) {
     $post_result = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+$title = $post_result['title'];
+$description = $post_result['description'];
+$date = $post_result['date'];
+$filename = $post_result['secure_file_name'];
+$mime_type = $post_result['content_type'];
+
 $image_dir = "../data/";
 
 ?>
@@ -34,16 +40,14 @@ $image_dir = "../data/";
 <body>
     <div class="page-container">
         <div class="content">
-            <?php // header
+            <?php // Header
             require_once("snippets/header.php");
             ?>
             <div class="block">
-                <a href="showImg.php?path=../<?= $post_result['file_name'] ?>">
-                    <?php debug_to_console('post_result: ' . $post_result['file_name']); ?>
+                <a href="showImg.php?path=../<?= $filename ?>">
                     <div class="flex">
-                        <?php //  new GET request for show file with filename
-                        $mime_type = $post['content_type'];
-                        displayImage($mime_type, $file_name);
+                        <?php //  Show image
+                        displayImage($mime_type, $image_dir . $filename);
                         ?>
                     </div>
                 </a>
