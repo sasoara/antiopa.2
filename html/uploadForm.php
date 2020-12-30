@@ -61,34 +61,37 @@ function displayImage(String $mime_type, String $filename)
                 displayImage($mime_type, $secure_filename);
                 ?>
                 <div class="pageheight">
-                    <?php // left container with title and description field
+                    <?php // Left container with title and description field
                     ?>
-                    <form method="post" id="postForm">
-                        <div class="inlineblock">
-                            <input tabindex="1" placeholder="Title" type="text" name="title" class="lightFont blocknormal" required>
-                            <textarea tabindex="2" placeholder="Description" name="description" class="lightFont blocknormal"></textarea>
-                        </div>
+                    <form action="validations/uploadForm_validation.php" method="post" enctype="application/x-www-form-urlencoded">
+                        <div style="display: inline-flex">
+                            <div class="inlineblock">
+                                <input tabindex="1" placeholder="Title" type="text" name="title" class="lightFont blocknormal" required>
+                                <textarea tabindex="2" placeholder="Description" name="description" class="lightFont blocknormal"></textarea>
+                            </div>
 
-                        <?php // right container with date field
-                        ?>
-                        <div class="inlineblock">
-                            <div class="date">
-                                <input tabindex="3" type="date" name="date" class="lightFont blocknormal" value="<?php echo date('Y-m-d'); ?>" required>
+                            <?php // Right container with date & public field
+                            ?>
+                            <div class="inlineblock">
+                                <div class="date">
+                                    <input tabindex="3" type="date" name="date" class="lightFont blocknormal" value="<?php echo date('Y-m-d'); ?>" required>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="public" value="1">
+                                    <label id="public" class="lightFont">public</label>
+                                </div>
                             </div>
                         </div>
-                        <?php // cancel and save buttons
+
+                        <?php // Cancel and save buttons
                         ?>
-                        <div class="inlineblock">
-                            <input type="checkbox" name="public" value="1">
-                            <label id="public" class="lightFont">public</label>
-                        </div>
                         <div class="block margin2">
 
-                            <?php // deletes specified file by clicking on cancel and redirects you to the upload.php page
-                            # TODO: Image nicht auf diesem Weg löschen!!
+                            <?php // Deletes uploaded image
                             ?>
-                            <button tabindex="6" onclick="location.href='upload.php?delete=<?= $secure_filename; ?>'" class="btn" name="cancel">Cancel</button>
-                            <?php // TODO: saves button saves datas in db
+                            <button tabindex="6" type="submit" class="btn" name="cancel">Cancel</button>
+
+                            <?php // Saves image and redirects to detailView.php
                             ?>
                             <button tabindex="5" type="submit" class="btn" name="save">Save</button>
                         </div>
@@ -97,7 +100,7 @@ function displayImage(String $mime_type, String $filename)
             </div>
         </div>
 
-        <?php // footer
+        <?php // Footer
         require_once("snippets/footer.php");
         ?>
     </div>
