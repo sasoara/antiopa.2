@@ -56,8 +56,8 @@ $dateFilterClass = 'inactive_sort';
                 </form>
                 <?php
                 // Database query to search
-                //require_once('queries/search.query.inc.php')
-                require_once('queries/query_search.php') ?>
+                require_once('queries/search.query.inc.php')
+                ?>
             </div>
         </div>
 
