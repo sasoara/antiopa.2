@@ -1,29 +1,28 @@
 <?php
-require_once("lib/db.php");
-# container for Antiopa web-page, includes header and footer
-$page_structure = require_once("page_structure.php");
+// Presents base services
 $info = require_once("info.php");
 
-if (!empty($_GET['id'])) {
-    $postId = htmlspecialchars($_GET['id']);
-    // TODO: my understanding is that `htmlspecialchars` does not escape `;`, so I could technically break the query with `id=1;DROP TABLE posts`. Using a prepared statement would be safer
-    $sql = "SELECT DISTINCT posts.title, posts.description, posts.date, posts.file_name, posts.content_type, posts.secure_file_name
-        FROM posts
-        WHERE posts.id = $postId;";
+// Contains page and footer infos
+$page_structure = require_once("page_structure.php");
 
-    $posts = $dbh->query($sql);
-    # $post[0] title, $post[1] description, $post[2] date
-    foreach ($posts as $post) {
-        $title = $post[0];
-        $description = $post[1];
-        $date = $post[2];
-        $file_name = $post[3];
-        $content_type = $post[4];
-        $secure_file_name = $post[5];
-    }
+//Helper function to display image data html tag
+require_once("snippets/display_image.php");
+
+# TODO: Validierung / Zugriffsrecht auf Bild privat / öffentlich
+
+if (!empty($_GET['id'])) {
+    $stmt = $dbh->prepare("SELECT DISTINCT title, description, date, file_name, content_type, secure_file_name FROM posts WHERE id = :id");
+    $postId = htmlspecialchars($_GET['id']);
+    $stmt->bindParam(':id', $postId);
+    $stmt->execute();
+    $post_result = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-
+$title = $post_result['title'];
+$description = $post_result['description'];
+$date = $post_result['date'];
+$filename = $post_result['secure_file_name'];
+$mime_type = $post_result['content_type'];
 
 $image_dir = "../data/";
 
@@ -43,16 +42,14 @@ $image_dir = "../data/";
 <body>
     <div class="page-container">
         <div class="content">
-            <?php // header
+            <?php // Header
             require_once("snippets/header.php");
             ?>
             <div class="block">
-                <a href="showImg.php?path=<?= $secure_file_name ?>&filename=<?= $file_name ?>">
+                <a href="showImg.php?path=../<?= $filename ?>">
                     <div class="flex">
-                        <?php //  new GET request for show file with filename
-                        require_once("utils.php");
-                        $mime_type = $post['content_type'];
-                        showDataTag($mime_type, $secure_file_name, $file_name);
+                        <?php //  Show image
+                        displayImage($mime_type, $image_dir . $filename);
                         ?>
                     </div>
                 </a>
@@ -60,7 +57,8 @@ $image_dir = "../data/";
                     <div class="flexnormal">
                         <?php //  title and description are read from the foreach loop, on the beginning of this page
                         ?>
-                        <?php // TODO: if either value is corrupted in the DB, then we could risk an XSS. It would be safer to wrap the output in `htmlspecialchars` ?>
+                        <?php // TODO: if either value is corrupted in the DB, then we could risk an XSS. It would be safer to wrap the output in `htmlspecialchars`
+                        ?>
                         <h1 class="title"><?= $title ?></h1>
                         <p class="date"><?= $date ?></p>
                     </div>
@@ -70,8 +68,9 @@ $image_dir = "../data/";
                     ?>
                         <div>
                             <h3>Description</h3>
-                            <?php // TODO: same here ?>
-                        <p><?= $description ?></p>
+                            <?php // TODO: same here
+                            ?>
+                            <p><?= $description ?></p>
                         </div>
                     <?php
                     }

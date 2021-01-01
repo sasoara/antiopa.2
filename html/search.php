@@ -1,13 +1,10 @@
 <?php
-// Database connectivity
-require_once("lib/db.php");
+// Presents base services
+$info = require_once("info.php");
 
 // Contains page and footer infos
 $page_structure = require_once("page_structure.php");
 
-// Queries for filtering and sorting
-// TODO: Braucht es diese info.php / queries??
-$info = require_once("info.php");
 
 $uri = $_SERVER['REQUEST_URI'];
 
