@@ -1,115 +1,129 @@
 <?php
 
 // Presents base services
-$info = require_once("info.php");
+require_once("../info.php");
 
+//Gets user email from session
+$uemail = $_SESSION['email'];
+
+//image dir path to take pictures from
 $image_dir = "../../data/";
 
-//Suchbegriff
+// Suchbegriff
 $url_term = htmlspecialchars($_GET['term']);
-//Name / Datum
+// Name/Datum
 $url_sort = htmlspecialchars($_GET['sort']);
-//ASC/DESC
+// ASC/DESC
 $url_orderby = htmlspecialchars($_GET['orderby']);
 
-
+//sort order
 if($url_sort == "title"){
     //sortierung nach titel
+    $sortstate = "title";
     if ($url_orderby = "desc"){
-        //ordert DESC
-        #Todo: Logic !!
-        $sort = "title_desc";
+        //title_desc
+        $sort = "ORDER BY p.title desc";
+        $orderstate = "desc";
     }else{
-        //ordert ASC
-        #Todo: Logic !!
-        $sort = "title_asc";
+        //title_asc
+        $sort = "ORDER BY p.title asc";
+        $orderstate = "asc";
     }
 }else{
     //sortierung nach datum
+    $sortstate = "date";
     if ($url_orderby = "desc"){
-        //ordert DESC
-        #Todo: Logic !!
-        $sort = "date_desc";
+        //date_desc
+        $sort = "ORDER BY p.date desc";
+        $orderstate = "asc";
     }else{
-        //ordert ASC
-        #Todo: Logic !!
-        $sort = "date_asc";
+        //date_asc
+        $sort = "ORDER BY p.date asc";
+        $orderstate = "desc";
     }
 }
 
-
-
-
-
-
-$is_term = (isset($_GET['term']) && !empty($_GET['term']));
-$empty_term = (isset($_GET['term']) && empty($_GET['term']));
-$no_term = (!isset($_GET['term']) && empty($_GET['term']));
-
-
-$is_sort_title = (isset($_GET['sort']) || !empty($_GET['sort']) && htmlspecialchars($_GET['sort']) == "title");
-$is_sort_date = (isset($_GET['sort']) || !empty($_GET['sort']) && htmlspecialchars($_GET['sort']) == "date");
-
-$is_ordered_desc = (isset($_GET['orderby']) && !empty($_GET['orderby']) && htmlspecialchars($_GET['orderby']) == "desc");
-$is_ordered_asc = (isset($_GET['orderby']) && !empty($_GET['orderby']) && htmlspecialchars($_GET['orderby']) == "asc");
-$is_empty_ordered = (!isset($_GET['orderby']) && empty($_GET['orderby']));
-
-// Url like /search.php
-if ($no_term) {
+// search term
+if(!empty($url_term)){
+    $search_params = "WHERE p.title= :term AND p.is_public like 1 or u.email like :email " . $sort;
+}elseif(empty($url_term)||isset($url_term)){
+    $search_params = "WHERE p.is_public like 1 or u.email like :email " . $sort;
+}else{
+    $search_params = "WHERE p.is_public like 1 or u.email like :email " . $sort . " LIMIT 10";
 }
 
-// Url like /search.php?term=
-if ($empty_term) {
+try{
+    $stmt = $dbh->prepare("SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_type FROM posts AS p LEFT JOIN users AS u ON p.users_id = u.id " . $search_params);
+
+    //provide corect params
+    if(!empty($url_term)){
+        $stmt->bindParam(':term', $url_term);
+        $stmt->bindParam(':email', $uemail);
+    }else{
+        $stmt->bindParam(':email', $uemail);
+    }
+
+    // Executing the sql query
+    //$posts = $dbh->query($stmt);
+    //$posts = $stmt->execute();
+
+    $stmt->execute();
+    $posts = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Post counter
+    debug_to_console($posts->rowCount() . "zeilen");
+    $counter_text = !empty($url_term) ? "Found results: " . $posts->rowCount() : "Limit 10";
+
+} catch (PDOException $e) {
+    # TODO: Logger!!
+    debug_to_console($e);
 }
-
-// Url like /search.php?term=button
-if ($is_term) {
-}
-
-
-if ($is_sort_title) {
-} elseif ($is_sort_date) {
-}
-
 
 ?>
 
-<?php // Post counter
-$number_of = $posts->rowCount();
-$counter_text = $is_term ? "Found posts: " . $number_of : "Post limit 10";
+<?php // displays the amount of posts
 ?>
 <div class="resultcounter"><?= $counter_text ?>
 </div>
 
 <?php // Sort buttons {date & title}
-$base_phpFile = "/search.php";
-$orderBY = $is_empty_ordered || $is_ordered_asc ? "asc" :  "desc";
-$abcSortClass = $is_sort_title ? 'active_sort_' . $orderBY : 'inactive_sort';
-$dateSortClass = $is_sort_date ? 'active_sort_' . $orderBY : 'inactive_sort';
 
-$searchURL = isset($_GET['term']) ? "&term=" . urlencode(htmlspecialchars($_GET['term'])) : "";
-// TODO: It would be safer to protect `$filterURL` so we don't forward an "attack" in the links below
-$sortURL_date = "?sort=date&orderby=";
-$sortURL_abc = "?sort=title&orderby=";
+//sort by date link
+$search_date = "/search.php?term=" . urlencode($url_term) . "&sort=date&orderby=";
+$search_date .= $orderstate == "desc" ? "asc" : "dec";
+
+//sort by term link
+$search_term = "/search.php?term=" . urlencode($url_term) . "&sort=term&orderby=";
+$search_term .= $orderstate == "desc" ? "asc" : "dec";
+
+//css class name generation
+$dateSortClass = $sortstate == "date" ? 'active_sort_' . $orderstate : 'inactive_sort';
+$abcSortClass = $sortstate == "title" ? 'active_sort_' . $orderstate : 'inactive_sort';
+
+?>
+
+<?php // display the sort by buttons
 ?>
 <div class="sticky">
-    <a href="<?php echo $base_phpFile . $sortURL_date . $orderBY . $searchURL ?>" id="date_sort" class="block <?= $dateSortClass ?>"></a>
-    <a href="<?php echo $base_phpFile . $sortURL_abc . $orderBY . $searchURL ?>" id="abc_sort" class="block <?= $abcSortClass ?>"></a>
-
+    <a href="<?= $search_date; ?>" id="date_sort" class="block <?= $dateSortClass; ?>"></a>
+    <a href="<?= $search_term; ?>" id="abc_sort" class="block <?= $abcSortClass; ?>"></a>
 </div>
 
 <?php // display every post from the query
 ?>
 <div class="block marginsearchresult">
-    <?php $dateCreated = date_create("$date");
-    $dateFormatted = date_format($dateCreated, "dS F Y");
+    <?php
+
+if(!empty($posts)){
 
 
     foreach ($posts as $post) {
         # TODO: Prüfen ob Spalten dieser Reihenfolge entspricht!!
         $post_id = $post[0];
         $title = $post[1];
-        $date = $post[2];
+        $date_from_db = $post[2];
+        $date = date_create("$date_from_db");
+        $dateFormatted = date_format($date, "dS F Y");
         $secure_filename = $post[3];
         $content_type = $post[4];
         // Check if the filetype is correct, if not DIE and inform the user.
@@ -118,7 +132,7 @@ $sortURL_abc = "?sort=title&orderby=";
             debug_to_console("It isn't a image format!");
             exit;
         }
-    }
+
     ?>
 
     <!-- For each Loop für Posts -->
@@ -132,6 +146,8 @@ $sortURL_abc = "?sort=title&orderby=";
             </span>
         </p>
     </a>
-    <?php // }
+    <?php
+    }
+}
     ?>
 </div>
