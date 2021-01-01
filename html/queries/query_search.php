@@ -5,6 +5,43 @@ $info = require_once("info.php");
 
 $image_dir = "../../data/";
 
+//Suchbegriff
+$url_term = htmlspecialchars($_GET['term']);
+//Name / Datum
+$url_sort = htmlspecialchars($_GET['sort']);
+//ASC/DESC
+$url_orderby = htmlspecialchars($_GET['orderby']);
+
+
+if($url_sort == "title"){
+    //sortierung nach titel
+    if ($url_orderby = "desc"){
+        //ordert DESC
+        #Todo: Logic !!
+        $sort = "title_desc";
+    }else{
+        //ordert ASC
+        #Todo: Logic !!
+        $sort = "title_asc";
+    }
+}else{
+    //sortierung nach datum
+    if ($url_orderby = "desc"){
+        //ordert DESC
+        #Todo: Logic !!
+        $sort = "date_desc";
+    }else{
+        //ordert ASC
+        #Todo: Logic !!
+        $sort = "date_asc";
+    }
+}
+
+
+
+
+
+
 $is_term = (isset($_GET['term']) && !empty($_GET['term']));
 $empty_term = (isset($_GET['term']) && empty($_GET['term']));
 $no_term = (!isset($_GET['term']) && empty($_GET['term']));
