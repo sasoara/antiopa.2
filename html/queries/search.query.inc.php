@@ -5,6 +5,10 @@
  * It contains the query which finds private and public posts.
  */
 
+// Presents base services
+$info = require_once("info.php");
+
+
 // string variable substitution per complex syntax:
 // https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.double
 
@@ -19,13 +23,10 @@
 
 $email = $_SESSION['email'];
 
-$limitation = isset($_GET['term']) !== TRUE ? "LIMIT 10" : "";
-$sql = "SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_type, p.is_public, p.users_id
+$limitation = !isset($_GET['term']) ? "LIMIT 10" : "";
+$sql = "SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_type, p.is_public, p.users_id FROM posts AS p LEFT JOIN users AS u ON p.users_id = u.id";
 
-                    FROM posts AS p
-
-                    LEFT JOIN users AS u ON p.users_id = u.id
-                    ";
+debug_to_console($sql);
 
 if (!empty($_GET['term'])) {
     // All search terms separated by spaces are saved
@@ -61,6 +62,7 @@ if (!empty($_GET['filter'])) {
     }
     $sql = substr_replace($sql, "", -2);
     $sql .= ") ";
+    debug_to_console($sql);
 
     $filterURL = implode('&filter%5B%5D=', $_GET['filter']);
 }
@@ -136,7 +138,7 @@ $display_post_counter = $is_term ? "Found results: " . $posts->rowCount() : "Lim
             $secure_file_name = "./imgs/document.png";
         }
     ?>
-        <a href="detailView.php?id=<?= $post[0]; ?>" style="background-image: url('showImg.php?path=<?= $secure_file_name ?>');" class="searchpreview inlineblock">
+        <a href="detailView.php?id=<?= $secure_file_name; ?>" style="background-image: url('showImg.php?path=<?= $secure_file_name ?>');" class="searchpreview inlineblock">
             <p class="title lightbackground baseline break">
                 <?= $title; ?>
                 <br>

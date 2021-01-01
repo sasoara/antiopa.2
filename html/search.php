@@ -53,36 +53,11 @@ $dateFilterClass = 'inactive_sort';
                         <input class="search" type="text" name="term">
                         <button type="submit" class="searchBtn btn"></button>
                     </div>
-
-                    <?php // Tabs under the search input field
-                    ?>
-                    <div class="flex">
-                        <?php // Filter documents
-                        ?>
-                        <div class="roundshadow tab">
-                            <label class="lightFont hand">
-                                <input type="checkbox" name="filter[]" value="docs"> docs
-                            </label>
-                        </div>
-                        <?php // Filter images
-                        ?>
-                        <div class="roundshadow tab">
-                            <label class="lightFont hand">
-                                <input type="checkbox" name="filter[]" value="images"> images
-                            </label>
-                        </div>
-                        <?php // Filter videos
-                        ?>
-                        <div class="roundshadow tab">
-                            <label class="lightFont hand">
-                                <input type="checkbox" name="filter[]" value="videos"> videos
-                            </label>
-                        </div>
-                    </div>
                 </form>
                 <?php
                 // Database query to search
-                require_once('queries/search.query.inc.php') ?>
+                //require_once('queries/search.query.inc.php')
+                require_once('queries/query_search.php') ?>
             </div>
         </div>
 
