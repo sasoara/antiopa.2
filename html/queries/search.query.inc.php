@@ -9,8 +9,11 @@ $uemail = $_SESSION['email'];
 // Image dir path to take pictures from
 $image_dir = "../data/";
 
+// To display post counter text
+$counter_text = "Found results: ";
+
 // Search term
-$url_term = isset($_GET['term']) ? htmlspecialchars($_GET['term']) : '';
+$url_terms = isset($_GET['term']) ? htmlspecialchars($_GET['term']) : '';
 // Name/Datum
 $url_sort = isset($_GET['sort']) ? htmlspecialchars($_GET['sort']) : '';
 // ASC/DESC
@@ -35,29 +38,29 @@ if ($url_sort == "title") {
     if ($url_orderby = "desc") {
         //date_desc
         $sort = "ORDER BY p.date desc";
-        $orderstate = "asc";
+        $orderstate = "desc";
     } else {
         //date_asc
         $sort = "ORDER BY p.date asc";
-        $orderstate = "desc";
+        $orderstate = "asc";
     }
 }
 
 // search term
-if (!empty($url_term)) {
-    $search_params = "WHERE p.title= :term AND p.is_public like 1 or u.email like :email " . $sort;
-} elseif (empty($url_term) || isset($url_term)) {
-    $search_params = "WHERE p.is_public like 1 or u.email like :email " . $sort;
+if (!empty($url_terms)) {
+    $search_params = "WHERE p.title = :term AND p.is_public LIKE 1 OR u.email = :email " . $sort;
+} elseif (empty($url_terms) || isset($url_terms)) {
+    $search_params = "WHERE p.is_public LIKE 1 OR u.email = :email " . $sort;
 } else {
-    $search_params = "WHERE p.is_public like 1 or u.email like :email " . $sort . " LIMIT 10";
+    $search_params = "WHERE p.is_public LIKE 1 OR u.email = :email " . $sort . " LIMIT 10";
 }
 
 try {
     $stmt = $dbh->prepare("SELECT p.id, p.title, p.date, p.secure_file_name, p.content_type FROM posts AS p LEFT JOIN users AS u ON p.users_id = u.id " . $search_params);
 
     //provide corect params
-    if (!empty($url_term)) {
-        $stmt->bindParam(':term', $url_term);
+    if (!empty($url_terms)) {
+        $stmt->bindParam(':term', $url_terms);
         $stmt->bindParam(':email', $uemail);
     } else {
         $stmt->bindParam(':email', $uemail);
@@ -68,7 +71,7 @@ try {
     $posts = $stmt->fetchAll();
 
     // Post counter
-    $counter_text = !empty($url_term) ? "Found results: " . count($posts) : "Limit 10";
+    $counter_text = !empty($url_terms) ? "Found results: " . count($posts) : "Limit 10";
 } catch (PDOException $e) {
     # TODO: Logger!!
     debug_to_console($e);
@@ -84,12 +87,12 @@ try {
 <?php // Sort buttons {date & title}
 
 //sort by date link
-$search_date = "/search.php?term=" . urlencode($url_term) . "&sort=date&orderby=";
-$search_date .= $orderstate == "desc" ? "asc" : "dec";
+$search_date = "/search.php?term=" . urlencode($url_terms) . "&sort=date&orderby=";
+$search_date .= $orderstate == "desc" ? "asc" : "desc";
 
 //sort by term link
-$search_term = "/search.php?term=" . urlencode($url_term) . "&sort=term&orderby=";
-$search_term .= $orderstate == "desc" ? "asc" : "dec";
+$search_term = "/search.php?term=" . urlencode($url_terms) . "&sort=term&orderby=";
+$search_term .= $orderstate == "desc" ? "asc" : "desc";
 
 //css class name generation
 $dateSortClass = $sortstate == "date" ? 'active_sort_' . $orderstate : 'inactive_sort';
