@@ -12,6 +12,7 @@ $image_dir = "../data/";
 // To display post counter text
 $counter_text = "Found results: ";
 
+$SQL = "SELECT p.id, p.title, p.date, p.secure_file_name, p.content_type FROM posts AS p LEFT JOIN users AS u ON p.users_id = u.id ";
 
 // Search term
 $url_terms = isset($_GET['term']) ? htmlspecialchars($_GET['term']) : '';
@@ -19,16 +20,6 @@ $url_terms = isset($_GET['term']) ? htmlspecialchars($_GET['term']) : '';
 $url_sort = isset($_GET['sort']) ? htmlspecialchars($_GET['sort']) : '';
 // Order by ASC / DESC
 $url_orderby = isset($_GET['orderby']) ? htmlspecialchars($_GET['orderby']) : '';
-
-
-// Terms in the url
-if (!empty($url_terms)) {
-    $search_params = "WHERE p.title = :term AND p.is_public LIKE 1 OR u.email = :email " . $sort;
-} elseif (empty($url_terms) || isset($url_terms)) {
-    $search_params = "WHERE p.is_public LIKE 1 OR u.email = :email " . $sort;
-} else {
-    $search_params = "WHERE p.is_public LIKE 1 OR u.email = :email " . $sort . " LIMIT 10";
-}
 
 // Sort order title or date
 if ($url_sort == "title") {
@@ -57,13 +48,22 @@ if ($url_sort == "title") {
     }
 }
 
+// Terms in the url
+if (!empty($url_terms)) {
+    $SQL .= "WHERE p.title LIKE :term AND (p.is_public = 1 OR u.email = :email) " . $sort;
+} elseif (empty($url_terms) || isset($url_terms)) {
+    $SQL .= "WHERE p.is_public = 1 OR u.email = :email " . $sort;
+} else {
+    $SQL .= "WHERE p.is_public = 1 OR u.email = :email " . $sort . " LIMIT 10";
+}
 
 try {
-    $stmt = $dbh->prepare("SELECT p.id, p.title, p.date, p.secure_file_name, p.content_type FROM posts AS p LEFT JOIN users AS u ON p.users_id = u.id " . $search_params);
+    $stmt = $dbh->prepare($SQL);
 
     // Provides correct parameters
     if (!empty($url_terms)) {
-        $stmt->bindParam(':term', $url_terms);
+        $param = "%".$url_terms."%";
+        $stmt->bindParam(':term', $param, PDO::PARAM_STR);
         $stmt->bindParam(':email', $uemail);
     } else {
         $stmt->bindParam(':email', $uemail);
@@ -114,10 +114,8 @@ $abcSortClass = $sortstate == "title" ? 'active_sort_' . $orderstate : 'inactive
 ?>
 <div class="block marginsearchresult">
     <?php
-
+    //prevention of loop over empty array
     if (!empty($posts)) {
-
-
         foreach ($posts as $post) {
             # TODO: Prüfen ob Spalten dieser Reihenfolge entspricht!!
             $post_id = $post['id'];
