@@ -5,8 +5,9 @@
  * It contains the query which saves an user (email) with a valid password.
  */
 
-// Database configuration
-require_once(__DIR__ . "/../../html/lib/db.php");
+// Presents base services
+require_once("html/info.php");
+
 // Possible error message
 $error = '';
 // POST request method - check(login_user)
@@ -24,6 +25,8 @@ if (isset($_POST['register_user'])) {
             $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
         } else {
 
+            debug_to_console("uemail= " . $uemail);
+            debug_to_console("upassword= " . $upassword);
             // Select users from the database to check for duplex users.
             try{
                 $stmt = $dbh->prepare("SELECT users.email FROM users WHERE users.email = :email LIMIT 1");
@@ -31,29 +34,32 @@ if (isset($_POST['register_user'])) {
                 $stmt->execute();
                 $db_email_result = $stmt->fetch(PDO::FETCH_ASSOC);
             } catch (PDOException $e) {
-            $error .= $e;
+                # TODO: Logger!!
+                debug_to_console($e);
             }
 
             // Insert registering user into database, if he are not existing yet.
             if (!$db_email_result) {
                 try{
-                $stmt = $dbh->prepare("INSERT INTO users (email, pwd) values (:email, :pwd_hash)");
-                //set email
-                $stmt->bindParam(':email', $uemail);
+                    $stmt = $dbh->prepare("INSERT INTO users (email, pwd) values (:email, :pwd_hash)");
+                    //set email
+                    $stmt->bindParam(':email', $uemail);
 
-                // hash, salt(by default since php7) and set email
-                $pwd_hash = password_hash($upassword, PASSWORD_DEFAULT);
-                $stmt->bindParam(':pwd_hash', $pwd_hash);
+                    // hash, salt(by default since php7) and set email
+                    $pwd_hash = password_hash($upassword, PASSWORD_DEFAULT);
+                    $stmt->bindParam(':pwd_hash', $pwd_hash);
 
-                // execute the insert statement
-                $stmt->execute();
-                $db_array_results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $_SESSION['email'] = $uemail;
-                $_SESSION['user_id'] = $db_array_results['id'];
-                $_SESSION['stay_logged_in'] = false;
-                header('location: html/search.php');
+                    // execute the insert statement
+                    $stmt->execute();
+                    //get the user id
+                    $post_id = $dbh->lastInsertId();
+                    $_SESSION['email'] = $uemail;
+                    $_SESSION['user_id'] = $post_id;
+                    $_SESSION['stay_logged_in'] = false;
+                    header('location: html/search.php');
                 } catch (PDOException $e) {
-                    $error .= $e;
+                    # TODO: Logger!!
+                    debug_to_console($e);
                 }
             } else {
                 $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
@@ -61,8 +67,15 @@ if (isset($_POST['register_user'])) {
         }
     }
     if (!empty($error)) {
-        # TODO: Logger!!
-        debug_to_console($error);
+        # TODO: Audit!!
+        ?>
+        <div class="block">
+            <?php
+            echo ($error);
+            $error = '';
+            ?>
+        </div>
+        <?php
     }
 }
 ?>
