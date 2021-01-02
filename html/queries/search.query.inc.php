@@ -91,7 +91,7 @@ $search_date = "/search.php?term=" . urlencode($url_terms) . "&sort=date&orderby
 $search_date .= $orderstate == "desc" ? "asc" : "desc";
 
 //sort by term link
-$search_term = "/search.php?term=" . urlencode($url_terms) . "&sort=term&orderby=";
+$search_term = "/search.php?term=" . urlencode($url_terms) . "&sort=title&orderby=";
 $search_term .= $orderstate == "desc" ? "asc" : "desc";
 
 //css class name generation
