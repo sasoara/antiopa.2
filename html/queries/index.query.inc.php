@@ -7,7 +7,7 @@
 
 // Database configuration
 require_once(__DIR__ . "/../../html/lib/db.php");
-// Possible error message
+// Possible user output error message
 $error = '';
 // Regex for email and password
 $valid_email_regex = "/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix";
@@ -18,26 +18,29 @@ if (isset($_POST['login_user'])) {
     if ((!isset($_POST['email']) || !isset($_POST['password'])) || (empty(trim($_POST['email'])) || empty(trim($_POST['password'])))) {
         $error = "Missing email or password.";
     } else {
+        //prepere variables fore usage
+        $uemail = htmlspecialchars($_POST['email']);
+        $upassword = htmlspecialchars($_POST['password']);
+        $ustayLoggedIn = is_bool($_POST["stayLoggedIn"])? $_POST["stayLoggedIn"] : false; /* # TODO Logger!! */ debug_to_console("invalid value in stayLoggedIn");
+
         // Check regex match of email and password
-        if (!preg_match($valid_email_regex, $_POST['email']) || !preg_match($valid_pw_regex, $_POST['password'])) {
+        if (!preg_match($valid_email_regex, $uemail) || !preg_match($valid_pw_regex, $upassword)) {
             $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
         } else {
             // Selects users from the database to check the fit.
-            $stmt = $dbh->prepare("SELECT email, pwd, id FROM users WHERE email = :email");
-            $email = htmlspecialchars($_POST['email']);
-            $password = $_POST['password']; // TODO: Braucht es hier auch htmlspecialchars()?? => @ramboz: Ich denke nicht. Der wird einfach nur gehashed und nicht woanders benutzt
-            $stmt->bindParam(':email', $email);
+            $stmt = $dbh->prepare("SELECT email, pwd, id FROM users WHERE email = :email LIMIT 1");
+            $stmt->bindParam(':email', $uemail);
             $stmt->execute();
             $db_array_results = $stmt->fetch(PDO::FETCH_ASSOC);
 
             // Checks the entered password, which must match the entered user.
-            if (password_verify($password, $db_array_results['pwd'])) { //TODO: Da versteckt sich ein Bug!!
+            if (password_verify($upassword, $db_array_results['pwd'])) { //TODO: Da versteckt sich ein Bug!!
                 session_regenerate_id(true);
 
                 // Session variables are set for the registered user.
-                $_SESSION['email'] = $email;
+                $_SESSION['email'] = $uemail;
                 $_SESSION['user_id'] = $db_array_results['id'];
-                $_SESSION['stay_logged_in'] = htmlspecialchars($_POST["stayLoggedIn"]); // TODO: htmlspecialchars für eine Checkbox??
+                $_SESSION['stay_logged_in'] = $ustayLoggedIn;
                 header('location: html/search.php');
             } else {
                 $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
