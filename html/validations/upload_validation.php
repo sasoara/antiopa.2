@@ -94,7 +94,3 @@ if (!empty($userfile) && ($userfile['error'] == UPLOAD_ERR_OK) && (strpos($userf
 }
 
 ?>
-
-<html>
-
-</html>
