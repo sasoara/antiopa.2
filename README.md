@@ -28,3 +28,6 @@ Then the access data will be saved in the `config/db_config.php` file, which sti
 
 ## Stored images
 To save the uploaded images, first create the directory `data / tmp`.
+
+## Logg outputt
+To deactivate the log output to the client use `error_display` off in the `php.ini`.
