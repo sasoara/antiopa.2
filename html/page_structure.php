@@ -10,7 +10,8 @@ return [
         'tags' => 'Tags',
         'upload' => 'Upload',
         'register' => 'Register',
-        'logout' => 'Logout'
+        'logout' => 'Logout',
+        'admin' => 'Admin'
     ],
     'footer' => [
         'company' => 'ANTIOPA 2.0',
