@@ -68,10 +68,7 @@ if (isset($_POST['save'])) {
         if (!is_writable($upload_dir)) {
             error_log('You cannot upload to the specified directory, please CHMOD it to 777.');
         }
-
-        debug_to_console($upload_temp_dir . $secure_filename);
-        debug_to_console($upload_dir . $secure_filename);
-
+        
         // Moves the image into the permanent directory
         rename($upload_temp_dir . $secure_filename, $upload_dir . $secure_filename);
 
