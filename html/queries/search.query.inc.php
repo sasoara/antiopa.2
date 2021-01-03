@@ -76,8 +76,7 @@ try {
     // Post counter
     $counter_text = !empty($url_terms) ? "Found results: " . count($posts) : "Limit 10";
 } catch (PDOException $e) {
-    # TODO: Logger!!
-    debug_to_console($e);
+    error_log("SQL error in search.query.inc: " . $e);
 }
 
 ?>
@@ -127,8 +126,7 @@ $abcSortClass = $sortstate == "title" ? 'active_sort_' . $orderstate : 'inactive
             $content_type = $post['content_type'];
             // Check if the filetype is correct, if not DIE and inform the user.
             if (!strpos($content_type, 'image/', 0) == 0) {
-                # TODO: Logger!!
-                debug_to_console("It isn't a image format!");
+                error_log("It isn't a image format! search.querry.inc");
                 exit;
             }
 

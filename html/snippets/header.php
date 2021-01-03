@@ -66,8 +66,7 @@ if(isset($_SESSION['email'])) {
         $db_array_results = $stmt->fetch(PDO::FETCH_ASSOC);
         $is_Admin = $db_array_results['ur']=="admin"? true : false;
     } catch (PDOException $e) {
-        # TODO: Logger!!
-        debug_to_console($e);
+        error_log("SQL error in header: " . $e);
     }
 }
 ?>

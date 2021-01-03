@@ -21,7 +21,7 @@ if (isset($_POST['login_user'])) {
         //prepere variables fore usage
         $uemail = htmlspecialchars($_POST['email']);
         $upassword = htmlspecialchars($_POST['password']);
-        $ustayLoggedIn = is_bool($_POST["stayLoggedIn"])? $_POST["stayLoggedIn"] : false; /* # TODO Logger!! */ debug_to_console("invalid value in stayLoggedIn");
+        $ustayLoggedIn = is_bool($_POST["stayLoggedIn"])? $_POST["stayLoggedIn"] : false; error_log("Invalid value in stayLoggedIn at index.query.inc");
 
         // Check regex match of email and password
         if (!preg_match($valid_email_regex, $uemail) || !preg_match($valid_pw_regex, $upassword)) {

@@ -42,22 +42,19 @@ if (!empty($userfile) && ($userfile['error'] == UPLOAD_ERR_OK) && (strpos($userf
 
     // Checks if the data/tmp directory is writable
     if (!is_writable($upload_temp_dir)) {
-        # TODO: Logger!!
-        debug_to_console("You cannot upload to the specified directory, please CHMOD it to 777.");
+        error_log("You cannot upload to the specified directory, please CHMOD it to 777.");
         exit;
     }
 
     // Be sure we're dealing with an upload
     if (is_uploaded_file($userfile['tmp_name']) === false) {
-        # TODO: Audit!!
-        debug_to_console("Error on upload: Invalid file definition");
+        error_log("Error on upload_validation: Invalid file definition");
         exit;
     }
 
     // Check if the filetype is allowed, if not DIE and inform the user.
     if (!strpos($userfile['type'], $allowed_type, 0) == 0) {
-        # TODO: Audit!!
-        debug_to_console("Opps! Image Format not allowed!");
+        error_log("Opps! Image Format not allowed! at upload_validation");
         exit;
     }
 
@@ -82,15 +79,13 @@ if (!empty($userfile) && ($userfile['error'] == UPLOAD_ERR_OK) && (strpos($userf
         $_SESSION['data'] = $data;
     } else {
         $_SESSION['data'] = $data;
-        # TODO: Logger!!
-        debug_to_console("Session 'data' isn't empty!");
+        error_log("Session 'data' isn't empty! at upload_validation");
     }
 
     // Redirect with POST request
     header("Location: ../uploadForm.php");
 } else {
-    # TODO: Audit!!
-    debug_to_console("NO VALID IMAGE FILE FOUND!");
+    error_log("NO VALID IMAGE FILE FOUND! at upload_validation");
 }
 
 ?>
