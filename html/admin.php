@@ -54,18 +54,15 @@ $page_structure = require_once("page_structure.php");
 
                     <?php
                             }else{
-                                # TODO: Logger!!
-                                debug_to_console("unoutorised acses try");
+                                error_log("prevented unoutorised acses try at admin");
                                 header('location: search.php');
                             }
                         } catch (PDOException $e) {
-                            # TODO: Logger!!
-                            debug_to_console($e);
+                            error_log("SQL error in admin: " . $e);
                             header('location: search.php');
                         }
                     }else{
-                        # TODO: Logger!!
-                        debug_to_console("no session email set");
+                        error_log("no session email set at");
                         header('location: search.php');
                     }
                     ?>

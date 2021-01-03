@@ -61,14 +61,12 @@ if (isset($_POST['save'])) {
 
         // Checks if the data/ directory is writable
         if (!is_readable($upload_temp_dir)) {
-            # TODO: Logger!!
-            debug_to_console('You cannot upload to the specified directory, please CHMOD it to 777.');
+            error_log('You cannot upload to the specified directory, please CHMOD it to 777.');
         }
 
         // Checks if the data/ directory is writable
         if (!is_writable($upload_dir)) {
-            # TODO: Logger!!
-            debug_to_console('You cannot upload to the specified directory, please CHMOD it to 777.');
+            error_log('You cannot upload to the specified directory, please CHMOD it to 777.');
         }
 
         debug_to_console($upload_temp_dir . $secure_filename);
@@ -95,8 +93,7 @@ if (isset($_POST['save'])) {
             // Get the id of the last insert
             $post_id = $dbh->lastInsertId();
         } catch (PDOException $e) {
-            # TODO: Logger!!
-            debug_to_console($e);
+            error_log("SQL error in uploadForm_validation: " . $e);
         }
         cleanSessionData();
         // Redirecting to detailed view
@@ -110,13 +107,11 @@ if (isset($_POST['save'])) {
         header("location: ../upload.php");
     } else {
         cleanSessionData();
-        # TODO: Logger!!
-        debug_to_console("No secure filename presented");
+        error_log("No secure filename presented at uploadForm_validation");
     }
 } else {
     cleanSessionData();
-    # TODO: Logger!!
-    debug_to_console("Invalid function!");
+    error_log("Invalid function call at uploadForm_validation");
 }
 
 // To destroy image data in session

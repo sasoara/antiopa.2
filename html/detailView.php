@@ -91,16 +91,14 @@ require_once("snippets/display_image.php");
 
                 <?php
                     }else{
-                        # TODO: Logger!! no image found
+                        error_log("no image found on search param at detailView");
                         header('location: search.php');
                     }
                 }else{
-                    # TODO: Logger!!
-                    debug_to_console("no post id");
+                    error_log("no post id presented at detailView");
                 }
             } catch (PDOException $e) {
-                # TODO: Logger!!
-                debug_to_console($e);
+                error_log("SQL error in detailView: " . $e);
             }
             ?>
 

@@ -53,13 +53,11 @@ if (isset($_POST['delete'])) {
                 $uout .= "all deleted sucsessful";
 
             }else{
-                # TODO: Logger!!
-                debug_to_console("unoutorised acses try");
+                error_log("Unoutorised acses prevented in admin.query.inc");
                 header('location: search.php');
             }
         } catch (PDOException $e) {
-            # TODO: Logger!!
-            debug_to_console($e);
+            error_log("SQL error in admin.query.inc: " . $e);
             header('location: search.php');
         }
     }
