@@ -39,7 +39,7 @@ if (!$_SESSION['stay_logged_in']) {
     }
 
     // Destroys the session if the request time was longer than 30 minutes
-    if ($_SESSION['LAST_REQUEST_TIME'] + 0.2 * 60 < time()) {
+    if ($_SESSION['LAST_REQUEST_TIME'] + 30 * 60 < time()) {
         session_destroy();
         session_write_close();
         setcookie($cookie_Params['name'], $cookie_Params['value'], $cookie_Params['expire'], $cookie_Params['path']);
