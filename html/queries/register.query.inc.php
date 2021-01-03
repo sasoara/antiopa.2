@@ -32,8 +32,7 @@ if (isset($_POST['register_user'])) {
                 $stmt->execute();
                 $db_email_result = $stmt->fetch(PDO::FETCH_ASSOC);
             } catch (PDOException $e) {
-                # TODO: Logger!!
-                debug_to_console($e);
+                error_log("SQL error in register.query.inc: " . $e);
             }
 
             // Insert registering user into database, if he are not existing yet.
@@ -57,8 +56,7 @@ if (isset($_POST['register_user'])) {
                     $_SESSION['stay_logged_in'] = false;
                     header('location: html/search.php');
                 } catch (PDOException $e) {
-                    # TODO: Logger!!
-                    debug_to_console($e);
+                    error_log("SQL error in register.query.inc: " . $e);
                 }
             } else {
                 $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
@@ -66,7 +64,6 @@ if (isset($_POST['register_user'])) {
         }
     }
     if (!empty($error)) {
-        # TODO: Audit!!
 ?>
         <div class="block">
             <?php

@@ -13,9 +13,9 @@ function displayImage(String $mime_type, String $filename)
     if (strpos($mime_type, 'image/', 0) !== false) { ?>
         <img class='imgview' src='showImg.php?path=<?= $filename ?>' alt='Thumbnail'>
     <?php return;
-    } // Data is something else TODO: Korrekte Error Meldung!!
+    } // Data is something else
     else {
-        # TODO: Audit Eintrag - Versuch ein anderer Mime Type hochzuladen!!
+        error_log("Intercepted attempt to smuggle in a wrong Mime Type at display_image.php");
         # TODO: Logik die abbricht und File aus tmp löscht oder gar nicht erst moved!!
     ?>
         <img class='imgview' src='imgs/warning.svg' alt='Warning'>
