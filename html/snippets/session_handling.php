@@ -21,6 +21,7 @@ session_set_cookie_params(
 // Starting the session
 session_start();
 
+// TODO: Scheitert!! Pfad ist nicht korrekt (für index.php)!
 // Checks where the request come from
 if (basename($_SERVER['HTTP_REFERER'], '?' . $_SERVER['QUERY_STRING']) == 'upload_validation.php' || basename($_SERVER['HTTP_REFERER'], '?' . $_SERVER['QUERY_STRING']) == 'uploadForm_validation.php') {
     $path_to_index = '../../index.php';
