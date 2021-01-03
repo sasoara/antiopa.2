@@ -5,8 +5,9 @@
  * It contains the query which saves an user (email) with a valid password.
  */
 
-// Database configuration
-require_once(__DIR__ . "/../../html/lib/db.php");
+// Presents base services
+require_once("html/info.php");
+
 // Possible error message
 $error = '';
 // POST request method - check(login_user)
@@ -15,37 +16,57 @@ if (isset($_POST['register_user'])) {
     if ((!isset($_POST['email']) || !isset($_POST['password'])) || (empty(trim($_POST['email'])) || empty(trim($_POST['password'])))) {
         $error = "Missing email or password";
     } else {
+        // Make user input harmless
+        $uemail = htmlspecialchars($_POST['email']);
+        $upassword = htmlspecialchars($_POST['password']);
+
         // Check regex match of email and password
-        if (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $_POST['email']) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $_POST['password'])) {
+        if (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $uemail) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $upassword)) {
             $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
         } else {
             // Select users from the database to check for duplex users.
-            $stmt = $dbh->prepare("SELECT users.email FROM users WHERE users.email = :email LIMIT 1");
-            // TODO: while we protect the query using a prepared statement, I would still escape to not leak an attacked email in the session on line 39
-            $email = $_POST['email'];
-            $stmt->bindParam(':email', $email);
-            $stmt->execute();
-            $db_email_result = $stmt->fetch(PDO::FETCH_ASSOC);
+            try {
+                $SQL = "SELECT users.email FROM users WHERE users.email = :email LIMIT 1";
+                $stmt = $dbh->prepare($SQL);
+                $stmt->bindParam(':email', $uemail);
+                $stmt->execute();
+                $db_email_result = $stmt->fetch(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                # TODO: Logger!!
+                debug_to_console($e);
+            }
 
             // Insert registering user into database, if he are not existing yet.
             if (!$db_email_result) {
-                $stmt = $dbh->prepare("INSERT INTO users (email, pwd) values (:email, :pwd_hash)");
-                $email = $_POST['email'];
-                $pwd_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':pwd_hash', $pwd_hash);
-                $stmt->execute();
-                $db_array_results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $_SESSION['email'] = $email;
-                $_SESSION['user_id'] = $db_array_results['id'];
-                $_SESSION['stay_logged_in'] = false;
-                header('location: html/search.php');
+                try {
+                    $SQL = "INSERT INTO users (email, pwd) VALUES (:email, :pwd_hash)";
+                    $stmt = $dbh->prepare($SQL);
+                    // Bind the email
+                    $stmt->bindParam(':email', $uemail);
+
+                    // Hash, salt(by default since php7) and set email
+                    $pwd_hash = password_hash($upassword, PASSWORD_DEFAULT);
+                    $stmt->bindParam(':pwd_hash', $pwd_hash);
+
+                    // Execute the prepared statement
+                    $stmt->execute();
+                    // Get the last registered user id
+                    $post_id = $dbh->lastInsertId();
+                    $_SESSION['email'] = $uemail;
+                    $_SESSION['user_id'] = $post_id;
+                    $_SESSION['stay_logged_in'] = false;
+                    header('location: html/search.php');
+                } catch (PDOException $e) {
+                    # TODO: Logger!!
+                    debug_to_console($e);
+                }
             } else {
-                $error = "Email already exists, try again!"; // TODO: Ist das eine gute / schlechte Fehlermeldung??
+                $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
             }
         }
     }
     if (!empty($error)) {
+        # TODO: Audit!!
 ?>
         <div class="block">
             <?php

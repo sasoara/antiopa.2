@@ -16,4 +16,4 @@ if (isset($_GET["path"])) {
     header('Content-Type: ' . mime_content_type($image_url));
     readfile($image_url);
 }
-exit;
+// exit;

@@ -1,152 +1,149 @@
 <?php
 
-/**
- * This file helps to find a post.
- * It contains the query which finds private and public posts.
- */
+// Presents base services
+require_once("info.php");
 
-// string variable substitution per complex syntax:
-// https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.double
+// Gets the user email from session
+$uemail = $_SESSION['email'];
 
-// TODO: Prüfen ob die Request Anfrage korrekt ist??
-/**
- * if ($_SERVER['REQUEST_METHOD'] === 'GET') {
- *      // the request method is fine
- * } else {
- *      exit('Invalid Request');
- * }
- */
+// Image dir path to take pictures from
+$image_dir = "../data/";
 
-$email = $_SESSION['email'];
+// To display post counter text
+$counter_text = "Found results: ";
 
-$limitation = isset($_GET['term']) !== TRUE ? "LIMIT 10" : "";
-$sql = "SELECT DISTINCT p.id, p.title, p.date, p.secure_file_name, p.content_type, p.is_public, p.users_id
+$SQL = "SELECT p.id, p.title, p.date, p.secure_file_name, p.content_type FROM posts AS p LEFT JOIN users AS u ON p.users_id = u.id ";
 
-                    FROM posts AS p
+// Search term
+$url_terms = isset($_GET['term']) ? htmlspecialchars($_GET['term']) : '';
+// Sort date & title
+$url_sort = isset($_GET['sort']) ? htmlspecialchars($_GET['sort']) : '';
+// Order by ASC / DESC
+$url_orderby = isset($_GET['orderby']) ? htmlspecialchars($_GET['orderby']) : '';
 
-                    LEFT JOIN users AS u ON p.users_id = u.id
-                    ";
+// Sort order title or date
+if ($url_sort == "title") {
+    // title
+    $sortstate = "title";
+    if ($url_orderby = "asc") {
+        // asc
+        $sort = "ORDER BY p.title ASC";
+        $orderstate = "asc";
+    } else {
+        // desc
+        $sort = "ORDER BY p.title DESC";
+        $orderstate = "desc";
+    }
+} else {
+    // date
+    $sortstate = "date";
+    if ($url_orderby = "desc") {
+        // desc
+        $sort = "ORDER BY p.date DESC";
+        $orderstate = "desc";
+    } else {
+        // asc
+        $sort = "ORDER BY p.date ASC";
+        $orderstate = "asc";
+    }
+}
 
-if (!empty($_GET['term'])) {
-    // All search terms separated by spaces are saved
-    // TODO: my understanding is that `htmlspecialchars` does not escape `;`, so I could technically break the query with `term=foo;DROP TABLE posts;`. Using a prepared statement would be safer
-    $query_terms = explode(' ', htmlspecialchars($_GET['term']));
+// Terms in the url
+if (!empty($url_terms)) {
+    $SQL .= "WHERE p.title LIKE :term AND (p.is_public = 1 OR u.email = :email) " . $sort;
+} elseif (empty($url_terms) || isset($url_terms)) {
+    $SQL .= "WHERE p.is_public = 1 OR u.email = :email " . $sort;
+} else {
+    $SQL .= "WHERE p.is_public = 1 OR u.email = :email " . $sort . " LIMIT 10";
+}
 
-    $conditions = [];
-    // Splitting the search terms
-    foreach ($query_terms as $term) {
-        // Prepare sql statement for search terms
-        $conditions[] = "p.title LIKE ('%$term%')";
-        $conditions[] = "p.description LIKE ('%$term%')";
+try {
+    $stmt = $dbh->prepare($SQL);
+
+    // Provides correct parameters
+    if (!empty($url_terms)) {
+        $param = "%".$url_terms."%";
+        $stmt->bindParam(':term', $param, PDO::PARAM_STR);
+        $stmt->bindParam(':email', $uemail);
+    } else {
+        $stmt->bindParam(':email', $uemail);
     }
 
-    // WHERE (p.title LIKE ('%blue%') OR p.description LIKE ('%blue%'))
-    $sql .= " WHERE (" . implode(' OR ', $conditions) .  ")";
+    // Executing the sql query
+    $stmt->execute();
+    $posts = $stmt->fetchAll();
+
+    // Post counter
+    $counter_text = !empty($url_terms) ? "Found results: " . count($posts) : "Limit 10";
+} catch (PDOException $e) {
+    # TODO: Logger!!
+    debug_to_console($e);
 }
 
-// Appends the 'AND' if 'WHERE' is present in the sql statement
-$sql .= strpos($sql, "WHERE") === false ? " WHERE " : " AND "; // TODO: Braucht es dieses WHERE??
-// Adds search for public and private posts to the sql statement
-// TODO: Same for `email` here
-$sql .= " (p.is_public like 1 or u.email like ('$email') )";
-
-// Checks the filter
-if (!empty($_GET['filter'])) {
-    // Appends the filter statement
-    $sql .= strpos($sql, "WHERE") === false ? " WHERE (" : " AND (";
-
-    // TODO: Same for `filter` here
-    foreach ($_GET['filter'] as $filter) {
-        $sql .= " p.content_type LIKE '" . $validFilters[$filter] . "' OR";
-    }
-    $sql = substr_replace($sql, "", -2);
-    $sql .= ") ";
-
-    $filterURL = implode('&filter%5B%5D=', $_GET['filter']);
-}
-
-//check if there is a sort condition
-if (!empty($_GET['sort'])) {
-    // TODO: Same for `sort` here
-    $sort = htmlspecialchars($_GET['sort']);
-
-    $orderBY = empty($_GET['orderby']) ? "asc" :  htmlspecialchars($_GET['orderby']);
-
-    $abcFilterClass = $sort == 'title' ? 'active_sort_' . $orderBY : 'inactive_sort';
-    $dateFilterClass = $sort == 'date' ? 'active_sort_' . $orderBY : 'inactive_sort';
-
-    $sql .= " ORDER BY p." . $sort . " " . $orderBY;
-}
-
-// URL term param
-$is_term = (!isset($_GET['term']) or empty($_GET['term']));
-
-// Displaying a limit of posts if in get request param 'term' isn't set
-$displaying_post_limit = " LIMIT 10";
-$sql .= $is_term ? $displaying_post_limit : "";
-
-// The sql query will be completed
-$sql .= ";";
-
-// Executing the sql query
-$posts = $dbh->query($sql);
-
-// Counter
-$display_post_counter = $is_term ? "Found results: " . $posts->rowCount() : "Limit 10";
 ?>
 
-<?php // Post counter
+<?php // Displays the amount of posts
 ?>
-<div class="resultcounter"><?= $display_post_counter ?></div>
-
-<div class="sticky">
-    <?php
-    $baseURL = "/search.php";
-    $searchURL = isset($_GET['term']) ? "&term=" . urlencode(htmlspecialchars($_GET['term'])) : "";
-    // TODO: It would be safer to protect `$filterURL` so we don't forward an "attack" in the links below
-    $filterURL = $filterURL != "" ? "&filter%5B%5D=" . $filterURL : "";
-    $sortURL_date = "?sort=date&orderby=";
-    $sortURL_abc = "?sort=title&orderby=";
-    $orderBY = "desc";
-
-    if (isset($_GET['orderby'])) {
-        $orderBY = $_GET['orderby'] == "asc" ? "desc" : "asc";
-    }
-    ?>
-    <a href="<?php echo $baseURL . $sortURL_date . $orderBY . $searchURL . $filterURL  ?>" id="date_sort" class="block <?= $dateFilterClass ?>"></a>
-    <a href="<?php echo $baseURL . $sortURL_abc . $orderBY . $searchURL . $filterURL  ?>" id="abc_sort" class="block <?= $abcFilterClass ?>"></a>
-
+<div class="resultcounter"><?= $counter_text ?>
 </div>
 
-<?php // display every post from the query
+<?php // Sort buttons {date & title}
+
+// Sort by date link
+$search_date = "/search.php?term=" . urlencode($url_terms) . "&sort=date&orderby=";
+$search_date .= $orderstate == "desc" ? "asc" : "desc";
+
+// Sort by term link
+$search_term = "/search.php?term=" . urlencode($url_terms) . "&sort=title&orderby=";
+$search_term .= $orderstate == "desc" ? "asc" : "desc";
+
+// Css class name generation
+$dateSortClass = $sortstate == "date" ? 'active_sort_' . $orderstate : 'inactive_sort';
+$abcSortClass = $sortstate == "title" ? 'active_sort_' . $orderstate : 'inactive_sort';
+
+?>
+
+<?php // Display the sort by buttons
+?>
+<div class="sticky">
+    <a href="<?= $search_date; ?>" id="date_sort" class="block <?= $dateSortClass; ?>"></a>
+    <a href="<?= $search_term; ?>" id="abc_sort" class="block <?= $abcSortClass; ?>"></a>
+</div>
+
+<?php // Display every post from the query
 ?>
 <div class="block marginsearchresult">
     <?php
-    $image_orderby = '../data/';
+    //prevention of loop over empty array
+    if (!empty($posts)) {
+        foreach ($posts as $post) {
+            # TODO: Prüfen ob Spalten dieser Reihenfolge entspricht!!
+            $post_id = $post['id'];
+            $title = $post['title'];
+            $date_from_db = $post['date'];
+            $date = date_create("$date_from_db");
+            $dateFormatted = date_format($date, "dS F Y");
+            $secure_filename = $post['secure_file_name'];
+            $content_type = $post['content_type'];
+            // Check if the filetype is correct, if not DIE and inform the user.
+            if (!strpos($content_type, 'image/', 0) == 0) {
+                # TODO: Logger!!
+                debug_to_console("It isn't a image format!");
+                exit;
+            }
 
-
-    foreach ($posts as $post) {
-        $title = $post[1];
-        $date = $post[2];
-        $secure_file_name = $post[3];
-        $content_type = $post[4];
-        if (strpos($content_type, 'video/', 0) !== false) {
-            $secure_file_name = "./imgs/video.png";
-        } elseif (strpos($content_type, 'application/', 0) !== false) {
-            $secure_file_name = "./imgs/document.png";
-        }
     ?>
-        <a href="detailView.php?id=<?= $post[0]; ?>" style="background-image: url('showImg.php?path=<?= $secure_file_name ?>');" class="searchpreview inlineblock">
-            <p class="title lightbackground baseline break">
-                <?= $title; ?>
-                <br>
-                <span class="dateTitle">
-                    <?php
-                    $dateFormatted = date_create("$date");
-                    echo date_format($dateFormatted, "dS F Y");
-                    ?>
-                </span>
-            </p>
-        </a>
-    <?php } ?>
+            <a href="detailView.php?id=<?= $post_id; ?>" style="background-image: url('showImg.php?path=<?= $image_dir . $secure_filename; ?>');" class="searchpreview inlineblock">
+                <p class="title lightbackground baseline break">
+                    <?= $title; ?>
+                    <br>
+                    <span class="dateTitle">
+                        <?= $dateFormatted; ?>
+                    </span>
+                </p>
+            </a>
+    <?php
+        }
+    }
+    ?>
 </div>

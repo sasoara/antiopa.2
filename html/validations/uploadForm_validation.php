@@ -126,7 +126,3 @@ function cleanSessionData()
 }
 
 ?>
-
-<html>
-
-</html>
