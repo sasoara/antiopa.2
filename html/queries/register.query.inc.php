@@ -16,7 +16,7 @@ if (isset($_POST['register_user'])) {
     if ((!isset($_POST['email']) || !isset($_POST['password'])) || (empty(trim($_POST['email'])) || empty(trim($_POST['password'])))) {
         $error = "Missing email or password";
     } else {
-        //make user input harmless
+        // Make user input harmless
         $uemail = htmlspecialchars($_POST['email']);
         $upassword = htmlspecialchars($_POST['password']);
 
@@ -28,8 +28,9 @@ if (isset($_POST['register_user'])) {
             debug_to_console("uemail= " . $uemail);
             debug_to_console("upassword= " . $upassword);
             // Select users from the database to check for duplex users.
-            try{
-                $stmt = $dbh->prepare("SELECT users.email FROM users WHERE users.email = :email LIMIT 1");
+            try {
+                $SQL = "SELECT users.email FROM users WHERE users.email = :email LIMIT 1";
+                $stmt = $dbh->prepare($SQL);
                 $stmt->bindParam(':email', $uemail);
                 $stmt->execute();
                 $db_email_result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -40,18 +41,19 @@ if (isset($_POST['register_user'])) {
 
             // Insert registering user into database, if he are not existing yet.
             if (!$db_email_result) {
-                try{
-                    $stmt = $dbh->prepare("INSERT INTO users (email, pwd) values (:email, :pwd_hash)");
-                    //set email
+                try {
+                    $SQL = "INSERT INTO users (email, pwd) VALUES (:email, :pwd_hash)";
+                    $stmt = $dbh->prepare($SQL);
+                    // Bind the email
                     $stmt->bindParam(':email', $uemail);
 
-                    // hash, salt(by default since php7) and set email
+                    // Hash, salt(by default since php7) and set email
                     $pwd_hash = password_hash($upassword, PASSWORD_DEFAULT);
                     $stmt->bindParam(':pwd_hash', $pwd_hash);
 
-                    // execute the insert statement
+                    // Execute the prepared statement
                     $stmt->execute();
-                    //get the user id
+                    // Get the last registered user id
                     $post_id = $dbh->lastInsertId();
                     $_SESSION['email'] = $uemail;
                     $_SESSION['user_id'] = $post_id;
@@ -68,14 +70,14 @@ if (isset($_POST['register_user'])) {
     }
     if (!empty($error)) {
         # TODO: Audit!!
-        ?>
+?>
         <div class="block">
             <?php
             echo ($error);
             $error = '';
             ?>
         </div>
-        <?php
+<?php
     }
 }
 ?>
