@@ -24,9 +24,6 @@ if (isset($_POST['register_user'])) {
         if (!preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $uemail) || !preg_match("/(?=^.{8,255}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/", $upassword)) {
             $error = "Not valid. Wrong email or password. Use specialchars, uppercase, numbers";
         } else {
-
-            debug_to_console("uemail= " . $uemail);
-            debug_to_console("upassword= " . $upassword);
             // Select users from the database to check for duplex users.
             try {
                 $SQL = "SELECT users.email FROM users WHERE users.email = :email LIMIT 1";
