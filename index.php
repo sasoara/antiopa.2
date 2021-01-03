@@ -1,8 +1,9 @@
 <?php
+// Presents base services
+require_once(__DIR__ . "/html/info.php");
+
 // Contains page and footer infos
 $page_structure = require_once(__DIR__ . "/html/page_structure.php");
-// TODO: Braucht es diese info.php / queries??
-$info = require_once(__DIR__ . "/html/info.php");
 
 ?>
 <!DOCTYPE html>

@@ -1,6 +1,6 @@
 <?php
 // Presents base services
-$info = require_once("info.php");
+require_once("info.php");
 
 // Contains page and footer infos
 $page_structure = require_once("page_structure.php");

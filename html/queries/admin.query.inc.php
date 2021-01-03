@@ -6,7 +6,7 @@
  */
 
 // Presents base services
-$info = require_once("info.php");
+require_once("info.php");
 
 
 
